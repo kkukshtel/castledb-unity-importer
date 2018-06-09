@@ -70,6 +70,7 @@ namespace CastleDBImporter
 
                 for (int i = 0; i < typeCount; i++)
                 {
+                    ctor1IL.Emit(OpCodes.Ldarg_0);                    
                     ctor1IL.Emit(OpCodes.Ldarg_S, i+1);
                     ctor1IL.Emit(OpCodes.Stfld, fields[i]);
                     // ctor1IL.Emit(OpCodes.Ldarg_1);
@@ -93,20 +94,35 @@ namespace CastleDBImporter
                 {
                     if(sheet.name != "unityTest3") { continue;}
                     FieldInfo fi = t.GetField("testStringColumn");
-                    // Create an instance of MyDynamicType using the constructor
-                    // that specifies m_Number. The constructor is identified by
-                    // matching the types in the argument array. In this case, 
-                    // the argument array is created on the fly. Display the 
-                    // property value.
-
                     //need to get all the generate fields
-                    //then convert the raw line stream to json?
+                    FieldInfo[] typeFields = t.GetFields();
+                    //convert the raw line stream to json using our new type
+                    // (t.GetType())newObj = JsonUtility.FromJson<t>(line.rawLine);
+
+
+                    for (int i = 0; i < typeFields.Length; i++)
+                    {
                     //then loop through generated fields and set their value to their value of the named key in json
-                    object generated = Activator.CreateInstance(t);
-                    // object generated = Activator.CreateInstance(t,
-                        // new object[]{
-                        //     "testTextValue"
-                        // });
+                        
+                    }
+
+    //                   int propertiesCounter = 0;
+
+    // // Loop over the values that we will assign to the properties
+    // foreach (XmlNode node in xmlDoc.SelectSingleNode("root").ChildNodes)
+    // {
+    //     string value = node.InnerText;
+    //     properties[propertiesCounter].SetValue(generetedObject, value, null);
+    //     propertiesCounter++;
+    // }
+                    
+                    
+                    // object generated = Activator.CreateInstance(t);
+                    object generated = Activator.CreateInstance(t,
+                        new object[]{
+                            "THISVALUEISNTRIGHT"
+                        });
+                    JsonUtility.FromJsonOverwrite(line.rawLine, generated);
                     // JsonUtility.FromJsonOverwrite(line.rawLine, generated);
                     Debug.Log($"o2.Number: {fi.GetValue(generated)}");
                 }
