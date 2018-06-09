@@ -1,0 +1,140 @@
+{
+	"sheets": [
+		{
+			"name": "unityTest",
+			"columns": [
+				{
+					"typeStr": "1",
+					"name": "textValue",
+					"display": null
+				},
+				{
+					"typeStr": "2",
+					"name": "booleanValue",
+					"display": null
+				},
+				{
+					"typeStr": "3",
+					"name": "integerValue",
+					"display": null
+				},
+				{
+					"typeStr": "4",
+					"name": "floatValue"
+				},
+				{
+					"typeStr": "5:enum1,enum2",
+					"name": "enumValue",
+					"display": null
+				},
+				{
+					"typeStr": "10:oneFlag,twoFlag",
+					"name": "flagValue",
+					"display": null
+				},
+				{
+					"typeStr": "8",
+					"name": "listValue",
+					"display": null
+				},
+				{
+					"typeStr": "11",
+					"name": "colorValue",
+					"display": null
+				},
+				{
+					"typeStr": "13",
+					"name": "fileValue",
+					"display": null
+				},
+				{
+					"typeStr": "7",
+					"name": "imageValue",
+					"display": null
+				}
+			],
+			"lines": [
+				{
+					"textValue": "testTextValue",
+					"booleanValue": false,
+					"integerValue": 42,
+					"floatValue": 42.42,
+					"enumValue": 0,
+					"flagValue": 1,
+					"listValue": [
+						{
+							"listColumn1": "listColumn1Value1",
+							"listColumn2": "listColumn2Value1"
+						}
+					],
+					"colorValue": 0,
+					"fileValue": "CastleDB.cs",
+					"imageValue": "fa589fa29f941683fe27a1b3d9c6daf3"
+				}
+			],
+			"separators": [],
+			"props": {}
+		},
+		{
+			"name": "unityTest2",
+			"columns": [
+				{
+					"typeStr": "1",
+					"name": "stringValueSheet2",
+					"display": null
+				},
+				{
+					"typeStr": "2",
+					"name": "boolValueSheet2"
+				}
+			],
+			"lines": [
+				{
+					"stringValueSheet2": "testStringSheet2",
+					"boolValueSheet2": true
+				}
+			],
+			"separators": [],
+			"props": {}
+		},
+		{
+			"name": "unityTest@listValue",
+			"props": {
+				"hide": true
+			},
+			"separators": [],
+			"lines": [],
+			"columns": [
+				{
+					"typeStr": "1",
+					"name": "listColumn1",
+					"display": null
+				},
+				{
+					"typeStr": "1",
+					"name": "listColumn2",
+					"display": null
+				}
+			]
+		},
+		{
+			"name": "unityTest3",
+			"columns": [
+				{
+					"typeStr": "1",
+					"name": "testStringColumn",
+					"display": null
+				}
+			],
+			"lines": [
+				{
+					"testStringColumn": "hello world"
+				}
+			],
+			"separators": [],
+			"props": {}
+		}
+	],
+	"customTypes": [],
+	"compress": false
+}
