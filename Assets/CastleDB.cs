@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor.Experimental.AssetImporters;
 using System.IO;
 using System.Collections.Generic;
+using SimpleJSON;
 
 namespace CastleDBImporter
 {
@@ -10,62 +11,75 @@ namespace CastleDBImporter
         //each sheet is it's own type and needs its own assembly (for now)
         //create the type from the columns
         //create the objects from the lines
+        public RootNode Root { get; private set;}
         public void Init(string raw)
         {
-            Root rootNode = JsonUtility.FromJson<Root>(raw);
-            foreach (Sheet item in rootNode.sheets)
+            // Root rootNode = JsonUtility.FromJson<Root>(raw);
+            Root = new RootNode(JSON.Parse(raw));
+            foreach (SheetNode sheet in Root.Sheets)
             {
-                Debug.Log(item.name);
+                Debug.Log(sheet.Name);
             }
             CastleAssemblyGenerator generator = new CastleAssemblyGenerator();
-            generator.GenerateAssemblies(rootNode);
+            generator.GenerateAssemblies(Root);
         }
 
-        [System.Serializable]
-        public class Root
+        public class RootNode
         {
-            public List<Sheet> sheets;
-            public List<CustomType> customTypes;
-            public bool compress;
+            JSONNode value;
+            public List<SheetNode> Sheets { get; protected set;}
+            public RootNode (JSONNode root)
+            {
+                value = root;
+
+                Sheets = new List<SheetNode>();
+                foreach (KeyValuePair<string, SimpleJSON.JSONNode> item in value["sheets"])
+                {
+                    Sheets.Add(new SheetNode(item.Value));
+                }
+            }
         }
 
-        [System.Serializable]
-        public class Sheet
+        public class SheetNode
         {
-            public string name;
-            public List<Column> columns;
-            public List<Line> lines;
-            public List<Seperator> seperators;
-            public List<Property> props;
+            JSONNode value;
+            public string Name { get; protected set; }
+            public List<ColumnNode> Columns { get; protected set; }
+            public List<SimpleJSON.JSONNode> Lines { get; protected set; }
+            // public List<SeperatorNode> Seperators { get; protected set; }
+            // public List<PropertyNode> Properties { get; protected set; }
+            public SheetNode(JSONNode sheetValue)
+            {
+                value = sheetValue;
+                Name = value["name"];
+                Columns = new List<ColumnNode>();
+                Lines = new List<SimpleJSON.JSONNode>();
+
+                foreach (KeyValuePair<string, SimpleJSON.JSONNode> item in value["columns"])
+                {
+                    Columns.Add(new ColumnNode(item.Value));
+                }
+
+                foreach (KeyValuePair<string, SimpleJSON.JSONNode> item in value["lines"])
+                {
+                    Lines.Add(item.Value);
+                }
+            }
         }
 
-        [System.Serializable]
-        public class Column
+        public class ColumnNode
         {
-            public string typeStr;
-            public string name;
-            public string display;
-        }
-
-        [System.Serializable]
-        public class Line
-        {
-            public string rawLine;
-        }
-
-        [System.Serializable]
-        public class Seperator
-        {
-        }
-
-        [System.Serializable]
-        public class Property
-        {
-        }
-
-        [System.Serializable]
-        public class CustomType
-        {
+            JSONNode value;
+            public string TypeStr { get; protected set;}
+            public string Name { get; protected set;}
+            public string Display { get; protected set;}
+            public ColumnNode(JSONNode sheetValue)
+            {
+                value = sheetValue;
+                Name = value["name"];
+                Display = value["display"];
+                TypeStr = value["typeStr"];
+            }
         }
     }
 

@@ -1,18 +1,20 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using UnityEngine;
+using SimpleJSON;
 
 namespace CastleDBImporter
 {
     public class CastleAssemblyGenerator
     {
-        public void GenerateAssemblies(CastleDB.Root rootNode)
+        public void GenerateAssemblies(CastleDB.RootNode root)
         {
-            foreach (CastleDB.Sheet sheet in rootNode.sheets)
+            foreach (CastleDB.SheetNode sheet in root.Sheets)
             {
                 // Each sheet generates a class
-                AssemblyName aName = new AssemblyName(sheet.name + "Assembly");
+                AssemblyName aName = new AssemblyName(sheet.Name + "Assembly");
                 AssemblyBuilder ab = 
                     AppDomain.CurrentDomain.DefineDynamicAssembly(
                         aName, 
@@ -24,28 +26,28 @@ namespace CastleDBImporter
                     ab.DefineDynamicModule(aName.Name, aName.Name + ".dll");
 
                 TypeBuilder tb = mb.DefineType(
-                    sheet.name, 
+                    sheet.Name, 
                     TypeAttributes.Public);
 
 
                 // Each column defines the fields of its given type 
-                int typeCount = sheet.columns.Count;
+                int typeCount = sheet.Columns.Count;
                 Type[] parameterTypes = new Type[typeCount];
                 FieldBuilder[] fields = new FieldBuilder[typeCount];
                 string[] fieldNames = new string[typeCount];
                 for (int i = 0; i < typeCount; i++)
                 {
-                    CastleDB.Column column = sheet.columns[i];
-                    Type fieldType = CastleDBUtils.GetTypeFromCastleDBType(column.typeStr);
+                    CastleDB.ColumnNode column = sheet.Columns[i];
+                    Type fieldType = CastleDBUtils.GetTypeFromCastleDBType(column.TypeStr);
                     parameterTypes[i] = fieldType;
 
                     // Add a public field of the specific type
                     FieldBuilder fb = tb.DefineField(
-                    column.name, 
+                    column.Name, 
                     fieldType, 
                     FieldAttributes.Public);
                     fields[i] = fb;
-                    fieldNames[i] = column.name;
+                    fieldNames[i] = column.Name;
                 }
 
 
@@ -90,41 +92,34 @@ namespace CastleDBImporter
                 // 
                 ab.Save(aName.Name + ".dll");
 
-                foreach (CastleDB.Line line in sheet.lines)
+                foreach (JSONNode line in sheet.Lines)
                 {
-                    if(sheet.name != "unityTest3") { continue;}
+                    if(sheet.Name != "unityTest3") { continue;}
                     FieldInfo fi = t.GetField("testStringColumn");
                     //need to get all the generate fields
                     FieldInfo[] typeFields = t.GetFields();
                     //convert the raw line stream to json using our new type
-                    // (t.GetType())newObj = JsonUtility.FromJson<t>(line.rawLine);
+                    object generated = Activator.CreateInstance(t);
 
-
-                    for (int i = 0; i < typeFields.Length; i++)
+                    for (int i = 0; i < sheet.Columns.Count; i++)
                     {
-                    //then loop through generated fields and set their value to their value of the named key in json
-                        
+                        //cast the line value to the type specificed by the typeString that is the name of the field
+                        switch (sheet.Columns[i].TypeStr)
+                        {
+                            case "1":
+                                typeFields[i].SetValue(generated, line[typeFields[i].Name].AsInt);
+                                break;
+                            default:
+                                break;
+                        }
                     }
-
-    //                   int propertiesCounter = 0;
-
-    // // Loop over the values that we will assign to the properties
-    // foreach (XmlNode node in xmlDoc.SelectSingleNode("root").ChildNodes)
-    // {
-    //     string value = node.InnerText;
-    //     properties[propertiesCounter].SetValue(generetedObject, value, null);
-    //     propertiesCounter++;
-    // }
-                    
-                    
-                    // object generated = Activator.CreateInstance(t);
-                    object generated = Activator.CreateInstance(t,
-                        new object[]{
-                            "THISVALUEISNTRIGHT"
-                        });
-                    JsonUtility.FromJsonOverwrite(line.rawLine, generated);
+                               
+                    // object generated = Activator.CreateInstance(t,
+                    //     new object[]{
+                    //         "THISVALUEISNTRIGHT"
+                    //     });
                     // JsonUtility.FromJsonOverwrite(line.rawLine, generated);
-                    Debug.Log($"o2.Number: {fi.GetValue(generated)}");
+                    // Debug.Log($"o2.Number: {fi.GetValue(generated)}");
                 }
             }
         }
