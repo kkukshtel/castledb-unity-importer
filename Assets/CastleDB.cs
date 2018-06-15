@@ -3,6 +3,9 @@ using UnityEditor.Experimental.AssetImporters;
 using System.IO;
 using System.Collections.Generic;
 using SimpleJSON;
+using System;
+
+
 
 namespace CastleDBImporter
 {
@@ -11,17 +14,32 @@ namespace CastleDBImporter
         //each sheet is it's own type and needs its own assembly (for now)
         //create the type from the columns
         //create the objects from the lines
-        public RootNode Root { get; private set;}
+        [SerializeField]
+        private string rawDB;
+        public RootNode Root
+        {
+            get 
+            {
+                return new RootNode(JSON.Parse(rawDB));
+            }
+        }
         public void Init(string raw)
         {
             // Root rootNode = JsonUtility.FromJson<Root>(raw);
-            Root = new RootNode(JSON.Parse(raw));
-            foreach (SheetNode sheet in Root.Sheets)
-            {
-                Debug.Log(sheet.Name);
-            }
+            rawDB = raw;
             CastleAssemblyGenerator generator = new CastleAssemblyGenerator();
             generator.GenerateAssemblies(Root);
+        }
+
+        public void CreateObject<T>(JSONNode line) //need to make generated assemblies extend from a base CDBType class
+        {
+            T newObject = (T)Activator.CreateInstance(typeof(T));
+            foreach (var f in typeof(T).GetFields())
+            {
+                //is it possible in here to assign a value to a field
+                //based on the line key name match?
+                Debug.Log(f.Name);
+            } 
         }
 
         public class RootNode
@@ -31,7 +49,6 @@ namespace CastleDBImporter
             public RootNode (JSONNode root)
             {
                 value = root;
-
                 Sheets = new List<SheetNode>();
                 foreach (KeyValuePair<string, SimpleJSON.JSONNode> item in value["sheets"])
                 {

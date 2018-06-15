@@ -15,10 +15,12 @@ namespace CastleDBImporter
             {
                 // Each sheet generates a class
                 AssemblyName aName = new AssemblyName(sheet.Name + "Assembly");
+                aName.CodeBase = Application.dataPath;
                 AssemblyBuilder ab = 
                     AppDomain.CurrentDomain.DefineDynamicAssembly(
                         aName, 
-                        AssemblyBuilderAccess.RunAndSave);
+                        AssemblyBuilderAccess.RunAndSave,
+                        Application.dataPath);
 
                 // For a single-module assembly, the module name is usually
                 // the assembly name plus an extension.
@@ -29,8 +31,10 @@ namespace CastleDBImporter
                     sheet.Name, 
                     TypeAttributes.Public);
 
+                tb.DefineDefaultConstructor(MethodAttributes.Public);
 
                 // Each column defines the fields of its given type 
+                // This block generates all the public fields of the generate type
                 int typeCount = sheet.Columns.Count;
                 Type[] parameterTypes = new Type[typeCount];
                 FieldBuilder[] fields = new FieldBuilder[typeCount];
@@ -51,12 +55,12 @@ namespace CastleDBImporter
                 }
 
 
-                // Define a constructor that takes an integer argument and 
+                // Define a constructor that takes a JSON argument and 
                 // stores it in the private field. 
                 ConstructorBuilder ctor1 = tb.DefineConstructor(
                     MethodAttributes.Public, 
                     CallingConventions.Standard, 
-                    parameterTypes);
+                    new Type[]{typeof(JSONNode)});
 
                 ILGenerator ctor1IL = ctor1.GetILGenerator();
                 // For a constructor, argument zero is a reference to the new
@@ -70,14 +74,20 @@ namespace CastleDBImporter
                 // that is to be assigned to the private field m_number.
                 // ctor1IL.Emit(OpCodes.Ldarg_0);
 
-                for (int i = 0; i < typeCount; i++)
-                {
-                    ctor1IL.Emit(OpCodes.Ldarg_0);                    
-                    ctor1IL.Emit(OpCodes.Ldarg_S, i+1);
-                    ctor1IL.Emit(OpCodes.Stfld, fields[i]);
-                    // ctor1IL.Emit(OpCodes.Ldarg_1);
-                    // ctor1IL.Emit(OpCodes.Stfld, fbNumber);
-                }
+                // for (int i = 0; i < typeCount; i++)
+                // {
+                //     ctor1IL.Emit(OpCodes.Ldarg_0);                    
+                //     ctor1IL.Emit(OpCodes.Ldarg_S, i+1);
+                //     ctor1IL.Emit(OpCodes.Stfld, fields[i]);
+                // }
+                FieldBuilder constructorField = tb.DefineField(
+                    "lineNode", 
+                    typeof(JSONNode), 
+                    FieldAttributes.Public);
+
+                ctor1IL.Emit(OpCodes.Ldarg_0);                    
+                ctor1IL.Emit(OpCodes.Ldarg_1);
+                ctor1IL.Emit(OpCodes.Stfld, constructorField);
 
                 ctor1IL.Emit(OpCodes.Ret);
 
@@ -92,35 +102,35 @@ namespace CastleDBImporter
                 // 
                 ab.Save(aName.Name + ".dll");
 
-                foreach (JSONNode line in sheet.Lines)
-                {
-                    if(sheet.Name != "unityTest3") { continue;}
-                    FieldInfo fi = t.GetField("testStringColumn");
-                    //need to get all the generate fields
-                    FieldInfo[] typeFields = t.GetFields();
-                    //convert the raw line stream to json using our new type
-                    object generated = Activator.CreateInstance(t);
+                // foreach (JSONNode line in sheet.Lines)
+                // {
+                //     if(sheet.Name != "unityTest3") { continue;}
+                //     FieldInfo fi = t.GetField("testStringColumn");
+                //     //need to get all the generate fields
+                //     FieldInfo[] typeFields = t.GetFields();
+                //     //convert the raw line stream to json using our new type
+                //     object generated = Activator.CreateInstance(t);
 
-                    for (int i = 0; i < sheet.Columns.Count; i++)
-                    {
-                        //cast the line value to the type specificed by the typeString that is the name of the field
-                        switch (sheet.Columns[i].TypeStr)
-                        {
-                            case "1":
-                                typeFields[i].SetValue(generated, line[typeFields[i].Name].AsInt);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
+                //     for (int i = 0; i < sheet.Columns.Count; i++)
+                //     {
+                //         //cast the line value to the type specificed by the typeString that is the name of the field
+                //         switch (sheet.Columns[i].TypeStr)
+                //         {
+                //             case "1":
+                //                 typeFields[i].SetValue(generated, line[typeFields[i].Name].AsInt);
+                //                 break;
+                //             default:
+                //                 break;
+                //         }
+                //     }
                                
-                    // object generated = Activator.CreateInstance(t,
-                    //     new object[]{
-                    //         "THISVALUEISNTRIGHT"
-                    //     });
-                    // JsonUtility.FromJsonOverwrite(line.rawLine, generated);
-                    // Debug.Log($"o2.Number: {fi.GetValue(generated)}");
-                }
+                //     // object generated = Activator.CreateInstance(t,
+                //     //     new object[]{
+                //     //         "THISVALUEISNTRIGHT"
+                //     //     });
+                //     // JsonUtility.FromJsonOverwrite(line.rawLine, generated);
+                //     // Debug.Log($"o2.Number: {fi.GetValue(generated)}");
+                // }
             }
         }
     }
