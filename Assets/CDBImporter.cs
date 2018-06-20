@@ -11,8 +11,11 @@ namespace CastleDBImporter
 
 		public override void OnImportAsset(AssetImportContext ctx)
 		{
-			CastleDB castle = ScriptableObject.CreateInstance<CastleDB>();
-			castle.Init(File.ReadAllText(ctx.assetPath));
+			// CastleDB castle = ScriptableObject.CreateInstance<CastleDB>();
+			// CastleDB castle = new CastleDBImporter.CastleDB(File.ReadAllText(ctx.assetPath));
+			TextAsset castle = new TextAsset(File.ReadAllText(ctx.assetPath));
+			// castle.Init(File.ReadAllText(ctx.assetPath));
+
 			// JsonUtility.FromJsonOverwrite(File.ReadAllText(ctx.assetPath), scriptable);
 			// var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			// var position = JsonUtility.FromJson<Vector3>(File.ReadAllText(ctx.assetPath));
@@ -22,8 +25,13 @@ namespace CastleDBImporter
 
 			// 'cube' is a a GameObject and will be automatically converted into a prefab
 			// (Only the 'Main Asset' is elligible to become a Prefab.)
+
 			ctx.AddObjectToAsset("main obj", castle);
 			ctx.SetMainObject(castle);
+
+			CastleDB newCastle = new CastleDB(castle);
+			CastleAssemblyGenerator generator = new CastleAssemblyGenerator();
+            generator.GenerateAssemblies(newCastle.GenerateDB());
 		}
 	}
 }

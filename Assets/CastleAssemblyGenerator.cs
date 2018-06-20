@@ -9,49 +9,83 @@ namespace CastleDBImporter
 {
     public class CastleAssemblyGenerator
     {
+        //DONE
         public void GenerateAssemblies(CastleDB.RootNode root)
         {
+            AssemblyName aName = new AssemblyName("CastleDBTypesAssembly");
+            aName.CodeBase = Application.dataPath;
+            AssemblyBuilder ab = 
+                AppDomain.CurrentDomain.DefineDynamicAssembly(
+                    aName, 
+                    AssemblyBuilderAccess.RunAndSave,
+                    Application.dataPath);
+
+            // For a single-module assembly, the module name is usually
+            // the assembly name plus an extension.
+            ModuleBuilder mb = 
+                ab.DefineDynamicModule(aName.Name, aName.Name + ".dll");
+
             foreach (CastleDB.SheetNode sheet in root.Sheets)
             {
                 // Each sheet generates a class
-                AssemblyName aName = new AssemblyName(sheet.Name + "Assembly");
-                aName.CodeBase = Application.dataPath;
-                AssemblyBuilder ab = 
-                    AppDomain.CurrentDomain.DefineDynamicAssembly(
-                        aName, 
-                        AssemblyBuilderAccess.RunAndSave,
-                        Application.dataPath);
-
-                // For a single-module assembly, the module name is usually
-                // the assembly name plus an extension.
-                ModuleBuilder mb = 
-                    ab.DefineDynamicModule(aName.Name, aName.Name + ".dll");
 
                 TypeBuilder tb = mb.DefineType(
                     sheet.Name, 
                     TypeAttributes.Public);
+
+                tb.SetParent(typeof(CastleDBImporter.CastleDBType));
+
 
                 tb.DefineDefaultConstructor(MethodAttributes.Public);
 
                 // Each column defines the fields of its given type 
                 // This block generates all the public fields of the generate type
                 int typeCount = sheet.Columns.Count;
-                Type[] parameterTypes = new Type[typeCount];
+                // Type[] parameterTypes = new Type[typeCount];
                 FieldBuilder[] fields = new FieldBuilder[typeCount];
                 string[] fieldNames = new string[typeCount];
                 for (int i = 0; i < typeCount; i++)
                 {
                     CastleDB.ColumnNode column = sheet.Columns[i];
-                    Type fieldType = CastleDBUtils.GetTypeFromCastleDBType(column.TypeStr);
-                    parameterTypes[i] = fieldType;
+                    Type fieldType = CastleDBUtils.GetTypeFromCastleDBTypeStr(column.TypeStr);
+                    if(fieldType != typeof(Enum))
+                    {
+                        FieldBuilder fb = tb.DefineField(
+                        column.Name, 
+                        fieldType, 
+                        FieldAttributes.Public);
+                        fields[i] = fb;
+                        fieldNames[i] = column.Name;
+                        // Add a public field of the specific type
+                    }
+                    else
+                    {
+                        EnumBuilder newEnum = mb.DefineEnum(column.Name, TypeAttributes.Public, typeof(int));
+                        string[] enumValues = CastleDBUtils.GetEnumValuesFromTypeString(column.TypeStr);
 
-                    // Add a public field of the specific type
-                    FieldBuilder fb = tb.DefineField(
-                    column.Name, 
-                    fieldType, 
-                    FieldAttributes.Public);
-                    fields[i] = fb;
-                    fieldNames[i] = column.Name;
+                        if(CastleDBUtils.GetTypeNumFromTypeString(column.TypeStr) == "10") //flag
+                        {
+                            ConstructorInfo cinfo = typeof(FlagsAttribute).GetConstructor(Type.EmptyTypes);
+                            CustomAttributeBuilder flagsAttribute = new CustomAttributeBuilder(cinfo, new object[] { });
+                            newEnum.SetCustomAttribute(flagsAttribute);
+
+                            
+                            for (int val = 0; i < enumValues.Length; i++)
+                            {
+                                newEnum.DefineLiteral(enumValues[val], (int)Math.Pow(2, val));
+                            }
+                        }
+
+                        else
+                        {
+                            for (int val = 0; i < enumValues.Length; i++)
+                            {
+                                newEnum.DefineLiteral(enumValues[val], val);
+                            }
+                        }
+
+                        newEnum.CreateType();
+                    }
                 }
 
 
@@ -80,14 +114,16 @@ namespace CastleDBImporter
                 //     ctor1IL.Emit(OpCodes.Ldarg_S, i+1);
                 //     ctor1IL.Emit(OpCodes.Stfld, fields[i]);
                 // }
-                FieldBuilder constructorField = tb.DefineField(
-                    "lineNode", 
-                    typeof(JSONNode), 
-                    FieldAttributes.Public);
 
-                ctor1IL.Emit(OpCodes.Ldarg_0);                    
-                ctor1IL.Emit(OpCodes.Ldarg_1);
-                ctor1IL.Emit(OpCodes.Stfld, constructorField);
+                //tries to define a constuctor that can assign a line to a field for use later but idk
+                // FieldBuilder constructorField = tb.DefineField(
+                //     "lineNode", 
+                //     typeof(JSONNode), 
+                //     FieldAttributes.Public);
+
+                // ctor1IL.Emit(OpCodes.Ldarg_0);                    
+                // ctor1IL.Emit(OpCodes.Ldarg_1);
+                // ctor1IL.Emit(OpCodes.Stfld, constructorField);
 
                 ctor1IL.Emit(OpCodes.Ret);
 
@@ -100,7 +136,6 @@ namespace CastleDBImporter
                 // examine the assembly. You can also write a program that has
                 // a reference to the assembly, and use the MyDynamicType type.
                 // 
-                ab.Save(aName.Name + ".dll");
 
                 // foreach (JSONNode line in sheet.Lines)
                 // {
@@ -132,6 +167,9 @@ namespace CastleDBImporter
                 //     // Debug.Log($"o2.Number: {fi.GetValue(generated)}");
                 // }
             }
+            
+            ab.Save(aName.Name + ".dll");
+
         }
     }
 }
