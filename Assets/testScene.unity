@@ -141,7 +141,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CastleDB: {fileID: 4900000, guid: 6ea4ca9debd2044f89a5ccc272b7bf09, type: 3}
-  test: 1
+  test: 0
 --- !u!4 &464218247
 Transform:
   m_ObjectHideFlags: 0

@@ -42,8 +42,8 @@ namespace CastleDBImporter
                 // This block generates all the public fields of the generate type
                 int typeCount = sheet.Columns.Count;
                 // Type[] parameterTypes = new Type[typeCount];
-                FieldBuilder[] fields = new FieldBuilder[typeCount];
-                string[] fieldNames = new string[typeCount];
+                // FieldBuilder[] fields = new FieldBuilder[typeCount];
+                // string[] fieldNames = new string[typeCount];
                 for (int i = 0; i < typeCount; i++)
                 {
                     CastleDB.ColumnNode column = sheet.Columns[i];
@@ -54,8 +54,8 @@ namespace CastleDBImporter
                         column.Name, 
                         fieldType, 
                         FieldAttributes.Public);
-                        fields[i] = fb;
-                        fieldNames[i] = column.Name;
+                        // fields[i] = fb;
+                        // fieldNames[i] = column.Name;
                         // Add a public field of the specific type
                     }
                     else
@@ -63,7 +63,7 @@ namespace CastleDBImporter
                         EnumBuilder newEnum = mb.DefineEnum(column.Name, TypeAttributes.Public, typeof(int));
                         string[] enumValues = CastleDBUtils.GetEnumValuesFromTypeString(column.TypeStr);
 
-                        if(CastleDBUtils.GetTypeNumFromTypeString(column.TypeStr) == "10") //flag
+                        if(CastleDBUtils.GetTypeNumFromCastleDBTypeString(column.TypeStr) == "10") //flag
                         {
                             ConstructorInfo cinfo = typeof(FlagsAttribute).GetConstructor(Type.EmptyTypes);
                             CustomAttributeBuilder flagsAttribute = new CustomAttributeBuilder(cinfo, new object[] { });

@@ -12,7 +12,7 @@ namespace CastleDBImporter
     {
         public static Type GetTypeFromCastleDBTypeStr(string inputString)
         {
-            switch (GetTypeNumFromTypeString(inputString))
+            switch (GetTypeNumFromCastleDBTypeString(inputString))
             {
                 case "1":
                     return typeof(string);
@@ -76,7 +76,7 @@ namespace CastleDBImporter
             return newObject;
         }
 
-        public static string GetTypeNumFromTypeString(string inputString)
+        public static string GetTypeNumFromCastleDBTypeString(string inputString)
         {
             Char delimiter = ':';
             String[] typeString = inputString.Split(delimiter);
@@ -94,15 +94,15 @@ namespace CastleDBImporter
 
         public static Type GetTypeForDBColumnName(CastleDB.RootNode root, string sheetName, string columnName)
         {
-            return GetTypeFromCastleDBTypeStr(GetRawTypeString(root, sheetName, columnName));
+            return GetTypeFromCastleDBTypeStr(GetRawTypeStringFromColumnName(root, sheetName, columnName));
         }
 
         public static string GetTypeNumFromRawTypeString(CastleDB.RootNode root, string sheetName, string columnName)
         {
-            return GetTypeNumFromTypeString(GetRawTypeString(root,sheetName,columnName));
+            return GetTypeNumFromCastleDBTypeString(GetRawTypeStringFromColumnName(root,sheetName,columnName));
         }
 
-        public static string GetRawTypeString(CastleDB.RootNode root, string sheetName, string columnName)
+        public static string GetRawTypeStringFromColumnName(CastleDB.RootNode root, string sheetName, string columnName)
         {
             CastleDB.SheetNode sheet = root.Sheets.FirstOrDefault(x => x.Name == sheetName);
             CastleDB.ColumnNode column = sheet.Columns.FirstOrDefault(x => x.Name == columnName);
