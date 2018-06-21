@@ -30,8 +30,9 @@ namespace CastleDBImporter
 			ctx.SetMainObject(castle);
 
 			CastleDB newCastle = new CastleDB(castle);
-			CastleAssemblyGenerator generator = new CastleAssemblyGenerator();
-            generator.GenerateAssemblies(newCastle.GenerateDB());
+			// CastleAssemblyGenerator generator = new CastleAssemblyGenerator();
+            // generator.GenerateAssemblies(newCastle.GenerateDB());
+			AssembyBuilderExample.BuildAssembly(newCastle.GenerateDB());
 		}
 	}
 }

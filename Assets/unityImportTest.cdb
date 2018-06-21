@@ -32,11 +32,6 @@
 					"name": "flagValue"
 				},
 				{
-					"typeStr": "8",
-					"name": "listValue",
-					"display": null
-				},
-				{
 					"typeStr": "11",
 					"name": "colorValue",
 					"display": null
@@ -52,10 +47,6 @@
 					"display": null
 				},
 				{
-					"typeStr": "6:unityTest2",
-					"name": "ref"
-				},
-				{
 					"typeStr": "9:MyCustomType",
 					"name": "customTypeValue",
 					"display": null
@@ -69,18 +60,9 @@
 					"floatValue": 42.42,
 					"enumValue": 1,
 					"flagValue": 11,
-					"listValue": [
-						{
-							"listColumn1": "listColumn1Value1",
-							"listColumn2": "listColumn2Value2",
-							"listColumn3": "listColumn3Value3",
-							"listColumn4": 23
-						}
-					],
 					"colorValue": 13893889,
 					"fileValue": "Martin_Nicolausson_INT_16.jpg",
 					"imageValue": "fa589fa29f941683fe27a1b3d9c6daf3",
-					"ref": "",
 					"customTypeValue": [
 						1,
 						0.5
@@ -115,35 +97,6 @@
 			],
 			"separators": [],
 			"props": {}
-		},
-		{
-			"name": "unityTest@listValue",
-			"props": {
-				"hide": true
-			},
-			"separators": [],
-			"lines": [],
-			"columns": [
-				{
-					"typeStr": "1",
-					"name": "listColumn1",
-					"display": null
-				},
-				{
-					"typeStr": "3",
-					"name": "listColumn4"
-				},
-				{
-					"typeStr": "1",
-					"name": "listColumn2",
-					"display": null
-				},
-				{
-					"typeStr": "1",
-					"name": "listColumn3",
-					"display": null
-				}
-			]
 		},
 		{
 			"name": "unityTest3",
