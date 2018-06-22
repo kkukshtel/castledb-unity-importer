@@ -32,6 +32,10 @@
 					"display": null
 				},
 				{
+					"typeStr": "8",
+					"name": "testListColumn"
+				},
+				{
 					"typeStr": "5:somevalue,anothervalue",
 					"name": "anotherenumcolumn"
 				},
@@ -53,11 +57,6 @@
 					"typeStr": "7",
 					"name": "imageValue",
 					"display": null
-				},
-				{
-					"typeStr": "9:MyCustomType",
-					"name": "customTypeValue",
-					"display": null
 				}
 			],
 			"lines": [
@@ -71,12 +70,21 @@
 					"colorValue": 13893889,
 					"fileValue": "Martin_Nicolausson_INT_16.jpg",
 					"imageValue": "fa589fa29f941683fe27a1b3d9c6daf3",
-					"customTypeValue": [
-						1,
-						0.5
-					],
 					"anotherenumcolumn": 0,
-					"anotherInt": 111112
+					"anotherInt": 111112,
+					"testListColumn": [
+						{
+							"listIntColumn": 71,
+							"listTextColumn": "listtextvalue",
+							"ListNestedList": [
+								{
+									"nestedListIntColumn": 3,
+									"nestedListFloatColumn": 111.1,
+									"nestedListString": "nestedListStringValue"
+								}
+							]
+						}
+					]
 				}
 			],
 			"separators": [],
@@ -124,50 +132,55 @@
 			],
 			"separators": [],
 			"props": {}
-		}
-	],
-	"customTypes": [
+		},
 		{
-			"name": "MyCustomType",
-			"cases": [
+			"name": "unityTest@testListColumn",
+			"props": {
+				"hide": true
+			},
+			"separators": [],
+			"lines": [],
+			"columns": [
 				{
-					"name": "Fixed",
-					"args": []
+					"typeStr": "3",
+					"name": "listIntColumn"
 				},
 				{
-					"name": "Random",
-					"args": [
-						{
-							"name": "v",
-							"typeStr": "4"
-						}
-					]
+					"typeStr": "1",
+					"name": "listTextColumn",
+					"display": null
 				},
 				{
-					"name": "UnityTest",
-					"args": [
-						{
-							"name": "m",
-							"typeStr": "6:unityTest",
-							"opt": true
-						}
-					]
+					"typeStr": "8",
+					"name": "ListNestedList",
+					"display": null
+				}
+			]
+		},
+		{
+			"name": "unityTest@testListColumn@ListNestedList",
+			"props": {
+				"hide": true
+			},
+			"separators": [],
+			"lines": [],
+			"columns": [
+				{
+					"typeStr": "3",
+					"name": "nestedListIntColumn"
 				},
 				{
-					"name": "Or",
-					"args": [
-						{
-							"name": "a",
-							"typeStr": "9:MyCustomType"
-						},
-						{
-							"name": "b",
-							"typeStr": "9:MyCustomType"
-						}
-					]
+					"typeStr": "1",
+					"name": "nestedListString",
+					"display": null
+				},
+				{
+					"typeStr": "4",
+					"name": "nestedListFloatColumn"
 				}
 			]
 		}
 	],
+	"customTypes": [],
 	"compress": false
 }
