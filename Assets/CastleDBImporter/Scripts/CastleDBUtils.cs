@@ -27,9 +27,35 @@ namespace CastleDBImporter
                 case "10": //enum flag
                     return typeof(Enum);
                 case "11":
-                    return typeof(Color); 
+                    return typeof(string); //TODO: fix color encoding  https://docs.unity3d.com/ScriptReference/ColorUtility.TryParseHtmlString.html
+                    // return typeof(Color); 
                 default:
                     return typeof(string);
+            }
+        }
+
+        public static string GetCastStringFromCastleDBTypeStr(string inputString)
+        {
+            JSONNode value;
+            //taken from the possibilites of casting in SimpleJSON
+            switch (GetTypeNumFromCastleDBTypeString(inputString))
+            {
+                case "1":
+                    return "";
+                case "2":
+                    return ".AsBool";
+                case "3":
+                    return ".AsInt";
+                case "4":
+                    return ".AsFloat";
+                case "5": //enum
+                    return ".AsInt";
+                case "10": //enum flag
+                    return ".AsInt";
+                case "11":
+                    return "";  //https://docs.unity3d.com/ScriptReference/ColorUtility.TryParseHtmlString.html
+                default:
+                    return "";
             }
         }
 

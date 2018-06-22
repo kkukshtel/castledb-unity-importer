@@ -19,6 +19,10 @@
 					"display": null
 				},
 				{
+					"typeStr": "3",
+					"name": "anotherInt"
+				},
+				{
 					"typeStr": "4",
 					"name": "floatValue"
 				},
@@ -26,6 +30,10 @@
 					"typeStr": "5:enum1,enum2",
 					"name": "enumValue",
 					"display": null
+				},
+				{
+					"typeStr": "5:somevalue,anothervalue",
+					"name": "anotherenumcolumn"
 				},
 				{
 					"typeStr": "10:oneFlag,twoFlag,threeFlag,fourFlag",
@@ -56,7 +64,7 @@
 				{
 					"textValue": "testText",
 					"booleanValue": true,
-					"integerValue": 42,
+					"integerValue": 51,
 					"floatValue": 42.42,
 					"enumValue": 1,
 					"flagValue": 11,
@@ -66,7 +74,9 @@
 					"customTypeValue": [
 						1,
 						0.5
-					]
+					],
+					"anotherenumcolumn": 0,
+					"anotherInt": 111112
 				}
 			],
 			"separators": [],

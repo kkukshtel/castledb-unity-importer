@@ -11,11 +11,6 @@ namespace CastleDBImporter
 {
     public class AssembyBuilderExample
     {
-        public enumff val;
-        public enum enumff
-        {
-            myval
-        }
         [MenuItem("CastleDB Importer/Rebuild Assembly")]
         public static void BuildCastleDBAssembly()
         {
@@ -23,10 +18,65 @@ namespace CastleDBImporter
             // BuildAssembly();
         }
 
+        [MenuItem("CastleDB Importer/Rebuild SimpleJSON DLL")]
+        public static void BuildSimpleJSON()
+        {
+            BuildSimpleJSONDLL();
+        }
+
+        public static void BuildSimpleJSONDLL()
+        {
+            var scripts = new[] { "Assets/CastleDBImporter/Scripts/SimpleJSON.cs"};
+            var outputAssembly = "Temp/MyAssembly/SimpleJSON.dll";
+            var assemblyProjectPath = "Assets/CastleDBImporter/CompiledTypes/SimpleJSON.dll";
+
+            Directory.CreateDirectory("Temp/MyAssembly");
+
+
+            var assemblyBuilder = new AssemblyBuilder(outputAssembly, scripts);
+
+            // Exclude a reference to the copy of the assembly in the Assets folder, if any.
+            assemblyBuilder.excludeReferences = new string[] { assemblyProjectPath };
+
+            // Called on main thread
+            assemblyBuilder.buildStarted += delegate(string assemblyPath)
+            {
+                Debug.LogFormat("Assembly build started for {0}", assemblyPath);
+            };
+
+            // Called on main thread
+            assemblyBuilder.buildFinished += delegate(string assemblyPath, CompilerMessage[] compilerMessages)
+            {
+                var errorCount = compilerMessages.Count(m => m.type == CompilerMessageType.Error);
+                var warningCount = compilerMessages.Count(m => m.type == CompilerMessageType.Warning);
+
+                Debug.LogFormat("Assembly build finished for {0}", assemblyPath);
+                Debug.LogFormat("Warnings: {0} - Errors: {0}", errorCount, warningCount);
+
+                if(errorCount == 0)
+                {
+                    File.Copy(outputAssembly, assemblyProjectPath, true);
+                    AssetDatabase.ImportAsset(assemblyProjectPath);
+                }
+            };
+
+            // Start build of assembly
+            if(!assemblyBuilder.Build())
+            {
+                Debug.LogErrorFormat("Failed to start build of assembly {0}!", assemblyBuilder.assemblyPath);
+                return;
+            }
+
+                while(assemblyBuilder.status != AssemblyBuilderStatus.Finished)
+                    System.Threading.Thread.Sleep(10);
+        }
+
         public static void BuildAssembly(CastleDB.RootNode root)
         {
+            //TODO: need to delete previous dll, then build this one
+            //TODO: need to do path management and create a path if it doesnt exsit and allow for a custom path
             var outputAssembly = "Temp/CastleDBAssembly/CastleDBAssembly.dll";
-            var assemblyProjectPath = "Assets/CastleDBAssembly.dll";
+            var assemblyProjectPath = "Assets/CastleDBImporter/CompiledTypes/CastleDBAssembly.dll";
 
             Directory.CreateDirectory("Temp/CastleDBAssembly");
 
@@ -58,7 +108,7 @@ namespace CastleDBImporter
                         if(CastleDBUtils.GetTypeNumFromCastleDBTypeString(column.TypeStr) == "10") //flag
                         {
                             attribute = "[FlagsAttribute]";
-                            fieldText += ("public " + column.Name + "Flag" + " " + column.Name + ";");
+                            fieldText += ("public " + column.Name + "Flag" + " " + column.Name + ";\n");
                             for (int val = 0; val < enumValueNames.Length; val++)
                             {
                                 enumEntries += (enumValueNames[val] + " = " + (int)Math.Pow(2, val));
@@ -68,7 +118,7 @@ namespace CastleDBImporter
                         }
                         else
                         {
-                            fieldText += ("public " + column.Name + "Enum" + " " + column.Name + ";");
+                            fieldText += ("public " + column.Name + "Enum" + " " + column.Name + ";\n");
                             for (int val = 0; val < enumValueNames.Length; val++)
                             {
                                 enumEntries += (enumValueNames[val] + " = " + val);
@@ -88,6 +138,21 @@ namespace CastleDBImporter
 
                 //generate the constructor that sets the fields based on the passed in value
                 string constructorText = "";
+                for (int i = 0; i < typeCount; i++)
+                {
+                    CastleDB.ColumnNode column = sheet.Columns[i];
+                    string castText = CastleDBUtils.GetCastStringFromCastleDBTypeStr(column.TypeStr);
+                    string enumCast = "";
+                    if(CastleDBUtils.GetTypeNumFromCastleDBTypeString(column.TypeStr) == "10")
+                    {
+                        enumCast = string.Format("({0}Flag)",column.Name);
+                    }
+                    else if(CastleDBUtils.GetTypeNumFromCastleDBTypeString(column.TypeStr) == "5")
+                    {
+                        enumCast = string.Format("({0}Enum)",column.Name);
+                    }
+                    constructorText += (string.Format("{0} = {2}lineNode[\"{0}\"]{1};\n",column.Name,castText,enumCast));
+                }
 
 
 
@@ -106,23 +171,20 @@ namespace CastleDBImporter
                 //      }
                 //  }
                 //  ",sheet.Name,fieldText,constructorText);
-                string fullClassText = "using UnityEngine; using System; public class " + sheet.Name + " { " + fieldText + " public " + sheet.Name + "() { " + constructorText + " }  }";
-                // string fullClassText = "using UnityEngine; using SimpleJSON; public class " + sheet.Name + " { " + fieldText + " public " + sheet.Name + "(SimpleJSON.JSONNode lineNode) { " + constructorText + " }  }";
+                // string fullClassText = "using UnityEngine; using System; public class " + sheet.Name + " { " + fieldText + " public " + sheet.Name + "() { " + constructorText + " }  }";
+                string fullClassText = "using UnityEngine;\n using System;\n using SimpleJSON;\n public class " + sheet.Name + "\n { " + fieldText + " public " + sheet.Name + "(SimpleJSON.JSONNode lineNode) { \n" + constructorText + "\n }  }";
+                Debug.Log("Generating CDB Class: " + sheet.Name);
+                Debug.Log(fullClassText);
                 File.WriteAllText(scriptPath, fullClassText);
             }
-
-
-
-
-
-
-
-
 
             var assemblyBuilder = new AssemblyBuilder(outputAssembly, scripts.ToArray());
 
             // Exclude a reference to the copy of the assembly in the Assets folder, if any.
             assemblyBuilder.excludeReferences = new string[] { assemblyProjectPath };
+            assemblyBuilder.additionalReferences = new string [] {"Assets/CastleDBImporter/CompiledTypes/SimpleJSON.dll"}; //TODO: need to have this path set dynamically
+
+            AssetDatabase.DeleteAsset(assemblyProjectPath); //TODO: not working?
 
             // Called on main thread
             assemblyBuilder.buildStarted += delegate(string assemblyPath)
