@@ -59,49 +59,6 @@ namespace CastleDBImporter
             }
         }
 
-        public static T CreateObject<T>(CastleDB.RootNode root, JSONNode line) where T : CastleDBType
-        {
-            T newObject = (T)Activator.CreateInstance(typeof(T));
-            foreach (FieldInfo f in typeof(T).GetFields())
-            {
-                //get the type of the field
-                //public int textValue;  testTextValue
-                //cast as the field type
-                // Type t = f.GetType(); // this may work too?
-                //switch on the typestr of the field name class
-                Debug.Log("getting field info for field: " + f.Name);
-                string typeString = CastleDBUtils.GetTypeNumFromRawTypeString(root, typeof(T).ToString(), f.Name);
-                Debug.Log($"typestr: {typeString}");
-                dynamic value;
-                switch (typeString)
-                {
-                    case "1":
-                        value = line[f.Name].Value;
-                        break;
-                    case "2":
-                        value = line[f.Name].AsBool;
-                        break;
-                    case "3":
-                        value = line[f.Name].AsInt;
-                        break;
-                    case "4":
-                        value = line[f.Name].AsFloat;
-                        break;
-                    case "5":
-                        value = line[f.Name].AsInt;
-                        break;
-                    case "10":
-                        value = line[f.Name].AsInt;
-                        break;
-                    default:
-                        value = line[f.Name].AsObject;
-                        break;
-                }
-                f.SetValue(newObject,value);
-            } 
-            return newObject;
-        }
-
         public static string GetTypeNumFromCastleDBTypeString(string inputString)
         {
             Char delimiter = ':';

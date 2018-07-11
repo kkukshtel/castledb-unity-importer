@@ -1,11 +1,7 @@
 using UnityEngine;
-using UnityEditor.Experimental.AssetImporters;
-using System.IO;
 using System.Collections.Generic;
 using SimpleJSON;
 using System;
-
-
 
 namespace CastleDBImporter
 {
@@ -41,6 +37,17 @@ namespace CastleDBImporter
                     Sheets.Add(new SheetNode(item.Value));
                 }
             }
+            public SheetNode GetSheetWithName(string name)
+            {
+                foreach (var item in Sheets)
+                {
+                    if(item.Name == name)
+                    {
+                        return item;
+                    }
+                }
+                return null;
+            }
         }
 
         public class SheetNode
@@ -48,7 +55,7 @@ namespace CastleDBImporter
             JSONNode value;
             public string Name { get; protected set; }
             public List<ColumnNode> Columns { get; protected set; }
-            public List<SimpleJSON.JSONNode> Lines { get; protected set; }
+            public List<SimpleJSON.JSONNode> Rows { get; protected set; }
             // public List<SeperatorNode> Seperators { get; protected set; }
             // public List<PropertyNode> Properties { get; protected set; }
             public SheetNode(JSONNode sheetValue)
@@ -56,7 +63,7 @@ namespace CastleDBImporter
                 value = sheetValue;
                 Name = value["name"];
                 Columns = new List<ColumnNode>();
-                Lines = new List<SimpleJSON.JSONNode>();
+                Rows = new List<SimpleJSON.JSONNode>();
 
                 foreach (KeyValuePair<string, SimpleJSON.JSONNode> item in value["columns"])
                 {
@@ -65,7 +72,7 @@ namespace CastleDBImporter
 
                 foreach (KeyValuePair<string, SimpleJSON.JSONNode> item in value["lines"])
                 {
-                    Lines.Add(item.Value);
+                    Rows.Add(item.Value);
                 }
             }
         }

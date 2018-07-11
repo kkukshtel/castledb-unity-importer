@@ -5,6 +5,10 @@
 			"columns": [
 				{
 					"typeStr": "1",
+					"name": "id"
+				},
+				{
+					"typeStr": "1",
 					"name": "textValue",
 					"display": null
 				},
@@ -30,10 +34,6 @@
 					"typeStr": "5:enum1,enum2",
 					"name": "enumValue",
 					"display": null
-				},
-				{
-					"typeStr": "8",
-					"name": "testListColumn"
 				},
 				{
 					"typeStr": "5:somevalue,anothervalue",
@@ -72,19 +72,7 @@
 					"imageValue": "fa589fa29f941683fe27a1b3d9c6daf3",
 					"anotherenumcolumn": 0,
 					"anotherInt": 111112,
-					"testListColumn": [
-						{
-							"listIntColumn": 71,
-							"listTextColumn": "listtextvalue",
-							"ListNestedList": [
-								{
-									"nestedListIntColumn": 3,
-									"nestedListFloatColumn": 111.1,
-									"nestedListString": "nestedListStringValue"
-								}
-							]
-						}
-					]
+					"id": "unityTestsampleRow"
 				}
 			],
 			"separators": [],
@@ -93,6 +81,11 @@
 		{
 			"name": "unityTest2",
 			"columns": [
+				{
+					"typeStr": "1",
+					"name": "id",
+					"display": null
+				},
 				{
 					"typeStr": "1",
 					"name": "stringValueSheet2",
@@ -106,79 +99,17 @@
 			"lines": [
 				{
 					"stringValueSheet2": "testStringSheet2",
-					"boolValueSheet2": true
+					"boolValueSheet2": true,
+					"id": "unitytest2SampleRow1"
 				},
 				{
 					"stringValueSheet2": "testStringagainColumn1Sheet2",
-					"boolValueSheet2": true
+					"boolValueSheet2": true,
+					"id": "unitytest2SampleRow2"
 				}
 			],
 			"separators": [],
 			"props": {}
-		},
-		{
-			"name": "unityTest3",
-			"columns": [
-				{
-					"typeStr": "1",
-					"name": "testStringColumn",
-					"display": null
-				}
-			],
-			"lines": [
-				{
-					"testStringColumn": "hello world"
-				}
-			],
-			"separators": [],
-			"props": {}
-		},
-		{
-			"name": "unityTest@testListColumn",
-			"props": {
-				"hide": true
-			},
-			"separators": [],
-			"lines": [],
-			"columns": [
-				{
-					"typeStr": "3",
-					"name": "listIntColumn"
-				},
-				{
-					"typeStr": "1",
-					"name": "listTextColumn",
-					"display": null
-				},
-				{
-					"typeStr": "8",
-					"name": "ListNestedList",
-					"display": null
-				}
-			]
-		},
-		{
-			"name": "unityTest@testListColumn@ListNestedList",
-			"props": {
-				"hide": true
-			},
-			"separators": [],
-			"lines": [],
-			"columns": [
-				{
-					"typeStr": "3",
-					"name": "nestedListIntColumn"
-				},
-				{
-					"typeStr": "1",
-					"name": "nestedListString",
-					"display": null
-				},
-				{
-					"typeStr": "4",
-					"name": "nestedListFloatColumn"
-				}
-			]
 		}
 	],
 	"customTypes": [],
