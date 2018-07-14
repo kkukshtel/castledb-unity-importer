@@ -27,6 +27,10 @@
 					"name": "anotherInt"
 				},
 				{
+					"typeStr": "3",
+					"name": "myInt"
+				},
+				{
 					"typeStr": "4",
 					"name": "floatValue"
 				},
@@ -72,7 +76,8 @@
 					"imageValue": "fa589fa29f941683fe27a1b3d9c6daf3",
 					"anotherenumcolumn": 0,
 					"anotherInt": 111112,
-					"id": "unityTestsampleRow"
+					"id": "unityTestsampleRow",
+					"myInt": 6999
 				}
 			],
 			"separators": [],

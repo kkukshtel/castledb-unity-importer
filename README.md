@@ -7,6 +7,7 @@ Define all your data in the external CastleDB software and enjoy macro-like inte
 
 ## Limitations
 * Currently there is no validation of column names, so column names in CastleDB need to be valid field names in C#. I.E. don't use spaces in your column names, weird characters, etc.
+* All sheets need to have some sort of GUID column that defines the name of a row. This defaults to "id" with a string type.
 
 
 ## TODO

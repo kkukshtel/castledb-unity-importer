@@ -221,7 +221,6 @@ namespace CastleDBImporter
                 //also need to have some utility functions like Type.CreateAllObjects returns list of all objects
                 
                 string possibleValuesText = $"public enum {sheet.Name}values {{ \n";
-                Debug.Log($"{sheet.Name} numrows: {numRows}");
                 for (int i = 0; i < numRows; i++)
                 {
                      possibleValuesText += sheet.Rows[i]["id"]; //TODO: need to have an identifying global name
@@ -240,7 +239,12 @@ namespace CastleDBImporter
             assemblyBuilder.excludeReferences = new string[] { assemblyProjectPath };
             assemblyBuilder.additionalReferences = new string [] {"Assets/CastleDBImporter/CompiledTypes/SimpleJSON.dll","Assets/CastleDBImporter/CompiledTypes/CastleDB.dll"}; //TODO: need to have this path set dynamically
 
-            AssetDatabase.DeleteAsset(assemblyProjectPath); //TODO: not working?
+            //first see if a DLL already exists
+            // if(AssetDatabase.DeleteAsset(assemblyProjectPath))
+            // {
+            //     Debug.Log("deleting asset");
+            //     System.Threading.Thread.Sleep(20);
+            // }
 
             // Called on main thread
             assemblyBuilder.buildStarted += delegate(string assemblyPath)
@@ -271,6 +275,34 @@ namespace CastleDBImporter
                     AssetDatabase.ImportAsset(assemblyProjectPath);
                 }
             };
+
+            // AssemblyReloadEvents.afterAssemblyReload += delegate()
+            // {
+            //     Debug.Log("assembly reloaded"); 
+            // };
+
+            // if(AssetDatabase.LoadMainAssetAtPath(assemblyProjectPath) != null)
+            // {
+            //     if(AssetDatabase.DeleteAsset(assemblyProjectPath))
+            //     {
+                    
+            //         // Start build of assembly
+            //         // if(!assemblyBuilder.Build())
+            //         // {
+            //         //     Debug.LogErrorFormat("Failed to start build of assembly {0}!", assemblyBuilder.assemblyPath);
+            //         //     return;
+            //         // }
+            //     }
+            // }
+            // else
+            // {
+            //     // Start build of assembly
+            //     if(!assemblyBuilder.Build())
+            //     {
+            //         Debug.LogErrorFormat("Failed to start build of assembly {0}!", assemblyBuilder.assemblyPath);
+            //         return;
+            //     }
+            // }
 
             // Start build of assembly
             if(!assemblyBuilder.Build())
