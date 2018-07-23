@@ -14,10 +14,8 @@ namespace CastleDBImporter
         {
             if(test)
             {
-                // Debug.Log("asdasda--------------------------------------------------");
-                // Debug.Log("wwwwwoowowoow--------------------------------------------------");
-                CastleDB castle = new CastleDB(CastleDB);
-                CastleDB.RootNode root = castle.GenerateDB();
+                // CastleDB castle = new CastleDB(CastleDB);
+                // CastleDB.RootNode root = castle.GenerateDB();
                 // unityTest mytest = new unityTest(root, unityTest.unityTestvalues.unityTestsampleRow);
                 // Debug.Log("anotherenumcolumn: " + mytest.anotherenumcolumn);
                 // Debug.Log("booleanValue: " + mytest.booleanValue);

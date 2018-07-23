@@ -31,6 +31,10 @@
 					"name": "myInt"
 				},
 				{
+					"typeStr": "3",
+					"name": "myNewInt"
+				},
+				{
 					"typeStr": "4",
 					"name": "floatValue"
 				},
@@ -77,7 +81,8 @@
 					"anotherenumcolumn": 0,
 					"anotherInt": 111112,
 					"id": "unityTestsampleRow",
-					"myInt": 6999
+					"myInt": 6999,
+					"myNewInt": 420
 				}
 			],
 			"separators": [],

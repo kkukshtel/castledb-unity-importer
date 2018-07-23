@@ -11,126 +11,6 @@ namespace CastleDBImporter
 {
     public class AssembyBuilderExample
     {
-        [MenuItem("CastleDB Importer/Rebuild Assembly")]
-        public static void BuildCastleDBAssembly()
-        {
-            //maybe do something here to load the TextAsset
-            // BuildAssembly();
-        }
-
-        [MenuItem("CastleDB Importer/Rebuild SimpleJSON DLL")]
-        public static void BuildSimpleJSON()
-        {
-            BuildSimpleJSONDLL();
-        }
-
-        [MenuItem("CastleDB Importer/Rebuild CastleDB DLL")]
-        public static void BuildCastleDB()
-        {
-            BuildCastleDBDLL();
-        }
-
-        public static void BuildCastleDBDLL()
-        {
-            var scripts = new[] { "Assets/CastleDBImporter/Scripts/CastleDB.cs"};
-            var outputAssembly = "Temp/MyAssembly/CastleDB.dll";
-            var assemblyProjectPath = "Assets/CastleDBImporter/CompiledTypes/CastleDB.dll";
-
-            Directory.CreateDirectory("Temp/MyAssembly");
-
-
-            var assemblyBuilder = new AssemblyBuilder(outputAssembly, scripts);
-
-            // Exclude a reference to the copy of the assembly in the Assets folder, if any.
-            assemblyBuilder.excludeReferences = new string[] { assemblyProjectPath };
-
-            // Called on main thread
-            assemblyBuilder.buildStarted += delegate(string assemblyPath)
-            {
-                Debug.LogFormat("Assembly build started for {0}", assemblyPath);
-            };
-
-            // Called on main thread
-            assemblyBuilder.buildFinished += delegate(string assemblyPath, CompilerMessage[] compilerMessages)
-            {
-                var errorCount = compilerMessages.Count(m => m.type == CompilerMessageType.Error);
-                var warningCount = compilerMessages.Count(m => m.type == CompilerMessageType.Warning);
-
-                Debug.LogFormat("Assembly build finished for {0}", assemblyPath);
-                Debug.LogFormat("Warnings: {0} - Errors: {0}", errorCount, warningCount);
-
-                foreach (CompilerMessage message in compilerMessages)
-                {
-                    if(message.type == CompilerMessageType.Error)
-                    {
-                        Debug.Log("ERROR: " + message.message);
-                    }
-                }
-
-                if(errorCount == 0)
-                {
-                    File.Copy(outputAssembly, assemblyProjectPath, true);
-                    AssetDatabase.ImportAsset(assemblyProjectPath);
-                }
-            };
-
-            // Start build of assembly
-            if(!assemblyBuilder.Build())
-            {
-                Debug.LogErrorFormat("Failed to start build of assembly {0}!", assemblyBuilder.assemblyPath);
-                return;
-            }
-
-                while(assemblyBuilder.status != AssemblyBuilderStatus.Finished)
-                    System.Threading.Thread.Sleep(10);
-        }
-        public static void BuildSimpleJSONDLL()
-        {
-            var scripts = new[] { "Assets/CastleDBImporter/Scripts/SimpleJSON.cs"};
-            var outputAssembly = "Temp/MyAssembly/SimpleJSON.dll";
-            var assemblyProjectPath = "Assets/CastleDBImporter/CompiledTypes/SimpleJSON.dll";
-
-            Directory.CreateDirectory("Temp/MyAssembly");
-
-
-            var assemblyBuilder = new AssemblyBuilder(outputAssembly, scripts);
-
-            // Exclude a reference to the copy of the assembly in the Assets folder, if any.
-            assemblyBuilder.excludeReferences = new string[] { assemblyProjectPath };
-
-            // Called on main thread
-            assemblyBuilder.buildStarted += delegate(string assemblyPath)
-            {
-                Debug.LogFormat("Assembly build started for {0}", assemblyPath);
-            };
-
-            // Called on main thread
-            assemblyBuilder.buildFinished += delegate(string assemblyPath, CompilerMessage[] compilerMessages)
-            {
-                var errorCount = compilerMessages.Count(m => m.type == CompilerMessageType.Error);
-                var warningCount = compilerMessages.Count(m => m.type == CompilerMessageType.Warning);
-
-                Debug.LogFormat("Assembly build finished for {0}", assemblyPath);
-                Debug.LogFormat("Warnings: {0} - Errors: {0}", errorCount, warningCount);
-
-                if(errorCount == 0)
-                {
-                    File.Copy(outputAssembly, assemblyProjectPath, true);
-                    AssetDatabase.ImportAsset(assemblyProjectPath);
-                }
-            };
-
-            // Start build of assembly
-            if(!assemblyBuilder.Build())
-            {
-                Debug.LogErrorFormat("Failed to start build of assembly {0}!", assemblyBuilder.assemblyPath);
-                return;
-            }
-
-                while(assemblyBuilder.status != AssemblyBuilderStatus.Finished)
-                    System.Threading.Thread.Sleep(10);
-        }
-
         public static void BuildAssembly(CastleDB.RootNode root)
         {
             //TODO: need to delete previous dll, then build this one
@@ -143,9 +23,12 @@ namespace CastleDBImporter
             // Create scripts
             List<string> scripts = new List<string>();
 
+            InitTypePath();
+
             foreach (CastleDB.SheetNode sheet in root.Sheets)
             {
-                string scriptPath = "Temp/CastleDBAssembly/"+sheet.Name+".cs";
+                // string scriptPath = "Temp/CastleDBAssembly/"+sheet.Name+".cs";
+                string scriptPath = "Assets/CastleDBImporter/GeneratedTypes/"+sheet.Name+".cs";
                 scripts.Add(scriptPath);
                 string scriptName = Path.GetFileNameWithoutExtension(scriptPath);
                 //geneate the fields with type
@@ -305,15 +188,55 @@ namespace CastleDBImporter
             // }
 
             // Start build of assembly
-            if(!assemblyBuilder.Build())
-            {
-                Debug.LogErrorFormat("Failed to start build of assembly {0}!", assemblyBuilder.assemblyPath);
-                return;
-            }
+            // if(!assemblyBuilder.Build())
+            // {
+            //     Debug.LogErrorFormat("Failed to start build of assembly {0}!", assemblyBuilder.assemblyPath);
+            //     return;
+            // }
 
-            while(assemblyBuilder.status != AssemblyBuilderStatus.Finished)
+            // while(assemblyBuilder.status != AssemblyBuilderStatus.Finished)
+            // {
+            //     System.Threading.Thread.Sleep(10);
+            // }
+            AssetDatabase.Refresh();
+        }
+
+        // [MenuItem("CastleDB Importer/Delete Type Folder")]
+        // public static void DeleteFolderAssets()
+        // {
+        //     var path = Application.dataPath + "/CastleDBImporter/GeneratedTypes";
+        //     // Verify that the folder exists (may have been already removed).
+        //     if (Directory.Exists (path))
+        //     {
+        //         Debug.Log ("Deleting : " + path);
+        //         // Remove dir (recursively)
+        //         Directory.Delete(path, true);
+
+        //         // Sync AssetDatabase with the delete operation.
+        //         AssetDatabase.DeleteAsset("/Assets/CastleDBImporter/GeneratedTypes");
+        //     }
+
+        //     // Refresh the asset database once we're done.
+        //     AssetDatabase.Refresh();
+        // }
+
+        public static void InitTypePath()
+        {
+            var path = Application.dataPath + "/CastleDBImporter/GeneratedTypes";
+            if (Directory.Exists (path))
             {
-                System.Threading.Thread.Sleep(10);
+                //we've generated this before, so delete the assets in the folder and refresh the DB
+                var files = Directory.GetFiles(path);
+                foreach (var file in files)
+                {
+                    FileUtil.DeleteFileOrDirectory(file);
+                }
+                AssetDatabase.Refresh();
+            }
+            else
+            {
+                Directory.CreateDirectory(path);
+                AssetDatabase.Refresh();
             }
         }
     }

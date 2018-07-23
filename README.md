@@ -3,6 +3,8 @@ Define all your data in the external CastleDB software and enjoy macro-like inte
 
 ## How it works
 
+* When you update the CastleDB file, the types will be reimported and everything in your path will be deleted.
+
 ## Implementation
 
 ## Limitations
@@ -12,7 +14,6 @@ Define all your data in the external CastleDB software and enjoy macro-like inte
 
 ## TODO
 * WORKING ON LIST SUPPORT
-* Easier way to add in SimpleJSON than a DLL? Unity's AssemblyBuilder won't take the SimpleJSON reference unless it's passed as a DLL reference. Maybe a namespace issue?
 * Add in List support
 * Add in Color support
 * Figure out a better guide for adding CastleDB Custom Trypes
