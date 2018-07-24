@@ -19,20 +19,11 @@
 				},
 				{
 					"typeStr": "3",
-					"name": "integerValue",
-					"display": null
-				},
-				{
-					"typeStr": "3",
-					"name": "anotherInt"
-				},
-				{
-					"typeStr": "3",
 					"name": "myInt"
 				},
 				{
-					"typeStr": "3",
-					"name": "myNewInt"
+					"typeStr": "8",
+					"name": "items"
 				},
 				{
 					"typeStr": "4",
@@ -42,10 +33,6 @@
 					"typeStr": "5:enum1,enum2",
 					"name": "enumValue",
 					"display": null
-				},
-				{
-					"typeStr": "5:somevalue,anothervalue",
-					"name": "anotherenumcolumn"
 				},
 				{
 					"typeStr": "10:oneFlag,twoFlag,threeFlag,fourFlag",
@@ -71,35 +58,68 @@
 				{
 					"textValue": "testText",
 					"booleanValue": true,
-					"integerValue": 51,
 					"floatValue": 42.42,
 					"enumValue": 1,
 					"flagValue": 11,
 					"colorValue": 13893889,
 					"fileValue": "Martin_Nicolausson_INT_16.jpg",
 					"imageValue": "fa589fa29f941683fe27a1b3d9c6daf3",
-					"anotherenumcolumn": 0,
-					"anotherInt": 111112,
 					"id": "unityTestsampleRow",
 					"myInt": 6999,
-					"myNewInt": 420
+					"items": [
+						{
+							"id": "item1",
+							"itemAttack": 100,
+							"itemAbilites": [
+								{
+									"id": "ability1",
+									"effect": "destory stuff"
+								},
+								{
+									"id": "ability2",
+									"effect": "heal stuff"
+								}
+							]
+						},
+						{
+							"id": "item2",
+							"itemAttack": 999,
+							"itemAbilites": [
+								{
+									"id": "ability10",
+									"effect": "move stuff"
+								}
+							]
+						}
+					]
+				},
+				{
+					"id": "sampleRow2",
+					"textValue": "anotherTextvaue",
+					"booleanValue": false,
+					"myInt": 0,
+					"floatValue": 32.22,
+					"enumValue": 1,
+					"flagValue": 4,
+					"colorValue": 0,
+					"fileValue": "",
+					"imageValue": "",
+					"items": []
 				}
 			],
 			"separators": [],
 			"props": {}
 		},
 		{
-			"name": "unityTest2",
+			"name": "abilities",
 			"columns": [
 				{
-					"typeStr": "1",
-					"name": "id",
-					"display": null
+					"typeStr": "0",
+					"name": "id"
 				},
 				{
 					"typeStr": "1",
-					"name": "stringValueSheet2",
-					"display": null
+					"name": "realname"
 				},
 				{
 					"typeStr": "2",
@@ -108,18 +128,62 @@
 			],
 			"lines": [
 				{
-					"stringValueSheet2": "testStringSheet2",
 					"boolValueSheet2": true,
-					"id": "unitytest2SampleRow1"
+					"realname": "awesomeness",
+					"id": "ability1"
 				},
 				{
-					"stringValueSheet2": "testStringagainColumn1Sheet2",
 					"boolValueSheet2": true,
-					"id": "unitytest2SampleRow2"
+					"realname": "craptastic",
+					"id": "abilit2"
 				}
 			],
 			"separators": [],
 			"props": {}
+		},
+		{
+			"name": "unityTest@items",
+			"props": {
+				"hide": true
+			},
+			"separators": [],
+			"lines": [],
+			"columns": [
+				{
+					"typeStr": "1",
+					"name": "id",
+					"display": null
+				},
+				{
+					"typeStr": "3",
+					"name": "itemAttack"
+				},
+				{
+					"typeStr": "8",
+					"name": "itemAbilites",
+					"display": null
+				}
+			]
+		},
+		{
+			"name": "unityTest@items@itemAbilites",
+			"props": {
+				"hide": true
+			},
+			"separators": [],
+			"lines": [],
+			"columns": [
+				{
+					"typeStr": "1",
+					"name": "id",
+					"display": null
+				},
+				{
+					"typeStr": "1",
+					"name": "effect",
+					"display": null
+				}
+			]
 		}
 	],
 	"customTypes": [],

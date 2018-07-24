@@ -14,21 +14,33 @@ namespace CastleDBImporter
         {
             if(test)
             {
-                // CastleDB castle = new CastleDB(CastleDB);
-                // CastleDB.RootNode root = castle.GenerateDB();
-                // unityTest mytest = new unityTest(root, unityTest.unityTestvalues.unityTestsampleRow);
-                // Debug.Log("anotherenumcolumn: " + mytest.anotherenumcolumn);
-                // Debug.Log("booleanValue: " + mytest.booleanValue);
-                // Debug.Log("colorValue: " + mytest.colorValue);
-                // Debug.Log("enumValue: " + mytest.enumValue);
-                // Debug.Log("fileValue: " + mytest.fileValue);
-                // Debug.Log("flagValue: " + mytest.flagValue);
-                // Debug.Log("floatValue: " + mytest.floatValue);
-                // Debug.Log("imageValue: " + mytest.imageValue);
-                // Debug.Log("integerValue: " + mytest.integerValue);
-                // Debug.Log("textValue: " + mytest.textValue);
+                CastleDB castle = new CastleDB(CastleDB);
+                CastleDB.RootNode root = castle.GenerateDB();
+                unityTest mytest = new unityTest(root, unityTest.unityTestvalues.unityTestsampleRow);
+                log("booleanValue: " + mytest.booleanValue);
+                log("colorValue: " + mytest.colorValue);
+                log("enumValue: " + mytest.enumValue);
+                log("fileValue: " + mytest.fileValue);
+                log("flagValue: " + mytest.flagValue);
+                log("floatValue: " + mytest.floatValue);
+                log("imageValue: " + mytest.imageValue);
+                foreach (var item in mytest.itemsList)
+                {
+                    log("attack " + item.itemAttack);
+                    foreach (var ability in item.itemAbilitesList)
+                    {
+                        log(ability.effect);
+                    }
+                }
+                
+                log("textValue: " + mytest.textValue);
                 test = false;
             }
+        }
+
+        void log(string text)
+        {
+            Debug.Log(text);
         }
     }
 

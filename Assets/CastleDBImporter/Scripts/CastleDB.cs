@@ -53,6 +53,7 @@ namespace CastleDBImporter
         public class SheetNode
         {
             JSONNode value;
+            public bool NestedType { get; protected set;}
             public string Name { get; protected set; }
             public List<ColumnNode> Columns { get; protected set; }
             public List<SimpleJSON.JSONNode> Rows { get; protected set; }
@@ -61,7 +62,20 @@ namespace CastleDBImporter
             public SheetNode(JSONNode sheetValue)
             {
                 value = sheetValue;
-                Name = value["name"];
+                string rawName = value["name"];
+                //for list types the name can come in as foo@bar@boo
+                Char delimit = '@';
+                var splitString = rawName.Split(delimit);
+                if(splitString.Length <= 1)
+                {
+                    Name = value["name"];
+                    NestedType = false;
+                }
+                else
+                {
+                    Name = splitString[splitString.Length - 1];
+                    NestedType = true;
+                }
                 Columns = new List<ColumnNode>();
                 Rows = new List<SimpleJSON.JSONNode>();
 

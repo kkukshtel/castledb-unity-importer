@@ -10,27 +10,31 @@ namespace CastleDBImporter
 {
     public static class CastleDBUtils
     {
-        public static Type GetTypeFromCastleDBTypeStr(string inputString)
+        public static string GetTypeFromCastleDBColumn(CastleDB.ColumnNode column)
         {
-            switch (GetTypeNumFromCastleDBTypeString(inputString))
+            string typeString = GetTypeNumFromCastleDBTypeString(column.TypeStr);
+            switch (typeString)
             {
                 case "1":
-                    return typeof(string);
+                    return "string";
                 case "2":
-                    return typeof(bool);
+                    return "bool";
                 case "3":
-                    return typeof(int);
+                    return "int";
                 case "4":
-                    return typeof(float);
+                    return "float";
                 case "5": //enum
-                    return typeof(Enum);
+                    return "Enum";
                 case "10": //enum flag
-                    return typeof(Enum);
-                case "11":
-                    return typeof(string); //TODO: fix color encoding  https://docs.unity3d.com/ScriptReference/ColorUtility.TryParseHtmlString.html
+                    return "Enum";
+                case "8": //nested type
+                    return column.Name;
+                case "11": //color
+                     //TODO: fix color encoding  https://docs.unity3d.com/ScriptReference/ColorUtility.TryParseHtmlString.html
+                    return "string";
                     // return typeof(Color); 
                 default:
-                    return typeof(string);
+                    return "string";
             }
         }
 
@@ -38,7 +42,8 @@ namespace CastleDBImporter
         {
             JSONNode value;
             //taken from the possibilites of casting in SimpleJSON
-            switch (GetTypeNumFromCastleDBTypeString(inputString))
+            string typeString = GetTypeNumFromCastleDBTypeString(inputString);
+            switch (typeString)
             {
                 case "1":
                     return "";
@@ -75,10 +80,10 @@ namespace CastleDBImporter
             return enumvalues;
         }
 
-        public static Type GetTypeForDBColumnName(CastleDB.RootNode root, string sheetName, string columnName)
-        {
-            return GetTypeFromCastleDBTypeStr(GetRawTypeStringFromColumnName(root, sheetName, columnName));
-        }
+        // public static Type GetTypeForDBColumnName(CastleDB.RootNode root, string sheetName, string columnName)
+        // {
+        //     return GetTypeFromCastleDBTypeStr(GetRawTypeStringFromColumnName(root, sheetName, columnName));
+        // }
 
         public static string GetTypeNumFromRawTypeString(CastleDB.RootNode root, string sheetName, string columnName)
         {

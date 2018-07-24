@@ -35,13 +35,21 @@ namespace CastleDBImporter
                 string fieldText = "";
                 int typeCount = sheet.Columns.Count;
                 int numRows = sheet.Rows.Count;
+                Debug.Log(sheet.Name + " has " + numRows + " rows");
                 for (int i = 0; i < typeCount; i++)
                 {
                     CastleDB.ColumnNode column = sheet.Columns[i];
-                    Type fieldType = CastleDBUtils.GetTypeFromCastleDBTypeStr(column.TypeStr);
-                    if(fieldType != typeof(Enum)) //non-enum, normal field
+                    string fieldType = CastleDBUtils.GetTypeFromCastleDBColumn(column);
+                    if(fieldType != "Enum") //non-enum, normal field
                     {
-                        fieldText += ("public " + fieldType.ToString() + " " + column.Name + ";\n");
+                        if(CastleDBUtils.GetTypeNumFromCastleDBTypeString(column.TypeStr) == "8")
+                        {
+                            fieldText += ($"public List<{fieldType}> {column.Name}List = new List<{fieldType}>();\n");
+                        }
+                        else
+                        {
+                            fieldText += ($"public {fieldType} {column.Name};\n");
+                        }
                     }
                     else //enum type
                     {
@@ -82,36 +90,61 @@ namespace CastleDBImporter
 
                 //generate the constructor that sets the fields based on the passed in value
                 string constructorText = "";
-                constructorText += $"SimpleJSON.JSONNode node = root.GetSheetWithName(\"{sheet.Name}\").Rows[(int)line];\n";
+                if(!sheet.NestedType)
+                {
+                    constructorText += $"SimpleJSON.JSONNode node = root.GetSheetWithName(\"{sheet.Name}\").Rows[(int)line];\n";
+                }
                 for (int i = 0; i < typeCount; i++)
                 {
                     CastleDB.ColumnNode column = sheet.Columns[i];
                     string castText = CastleDBUtils.GetCastStringFromCastleDBTypeStr(column.TypeStr);
                     string enumCast = "";
-                    if(CastleDBUtils.GetTypeNumFromCastleDBTypeString(column.TypeStr) == "10")
+                    string typeNum = CastleDBUtils.GetTypeNumFromCastleDBTypeString(column.TypeStr);
+                    if(typeNum != "8")
                     {
-                        enumCast = string.Format("({0}Flag)",column.Name);
+                        if(typeNum == "10")
+                        {
+                            enumCast = $"({column.Name}Flag)";
+                        }
+                        else if(typeNum == "5")
+                        {
+                            enumCast = $"({column.Name}Enum)";
+                        }
+                        constructorText += $"{column.Name} = {enumCast}node[\"{column.Name}\"]{castText};\n";
                     }
-                    else if(CastleDBUtils.GetTypeNumFromCastleDBTypeString(column.TypeStr) == "5")
+                    else
                     {
-                        enumCast = string.Format("({0}Enum)",column.Name);
+                        constructorText += $"foreach(var item in node[\"{column.Name}\"]) {{ {column.Name}List.Add(new {column.Name}(item));}}";
+                        // constructorText += $"{column.Name} = new {column.Name}(node[\"{column.Name}\"]);\n";
                     }
-                    constructorText += $"{column.Name} = {enumCast}node[\"{column.Name}\"]{castText};\n";
-                    // constructorText += (string.Format("{0} = {2}lineNode[\"{0}\"]{1};\n",column.Name,castText,enumCast));
                 }
 
                 //need to construct an enum of possible types
                 //also need to have some utility functions like Type.CreateAllObjects returns list of all objects
                 
-                string possibleValuesText = $"public enum {sheet.Name}values {{ \n";
-                for (int i = 0; i < numRows; i++)
+                string possibleValuesText = "";
+                if(!sheet.NestedType)
                 {
-                     possibleValuesText += sheet.Rows[i]["id"]; //TODO: need to have an identifying global name
-                     if(i+1 < numRows){ possibleValuesText += ", \n";}
+                    possibleValuesText += $"public enum {sheet.Name}values {{ \n";
+                    for (int i = 0; i < numRows; i++)
+                    {
+                        possibleValuesText += sheet.Rows[i]["id"]; //TODO: need to have an identifying global name
+                        if(i+1 < numRows){ possibleValuesText += ", \n";}
+                    }
+                    possibleValuesText += "\n }";
                 }
-                possibleValuesText += "\n }";
 
-                string fullClassText = $"using UnityEngine;\n using System;\n using SimpleJSON;\n using CastleDBImporter;\n public class {sheet.Name} \n {{ \n {fieldText} \n {possibleValuesText} public {sheet.Name} (CastleDB.RootNode root, {sheet.Name}values line) {{ \n {constructorText} \n }}  }}";
+                string ctor = "";
+                if(!sheet.NestedType)
+                {
+                    ctor = $"public {sheet.Name} (CastleDB.RootNode root, {sheet.Name}values line)";
+                }
+                else
+                {
+                    ctor = $"public {sheet.Name} (SimpleJSON.JSONNode node)";
+                }
+                string usings = "using UnityEngine;\n using System;\n using System.Collections.Generic;\n using SimpleJSON;\n using CastleDBImporter;\n";
+                string fullClassText = $"{usings} public class {sheet.Name} \n {{ \n {fieldText} \n {possibleValuesText} {ctor} {{ \n {constructorText} \n }}  }}";
                 Debug.Log("Generating CDB Class: " + sheet.Name);
                 File.WriteAllText(scriptPath, fullClassText);
             }
