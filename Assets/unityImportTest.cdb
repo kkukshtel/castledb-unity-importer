@@ -44,6 +44,11 @@
 					"display": null
 				},
 				{
+					"typeStr": "6:abilities",
+					"name": "ability",
+					"display": null
+				},
+				{
 					"typeStr": "13",
 					"name": "fileValue",
 					"display": null
@@ -91,7 +96,8 @@
 								}
 							]
 						}
-					]
+					],
+					"ability": "ability1"
 				},
 				{
 					"id": "sampleRow2",
@@ -104,7 +110,8 @@
 					"colorValue": 0,
 					"fileValue": "",
 					"imageValue": "",
-					"items": []
+					"items": [],
+					"ability": "abilit2"
 				}
 			],
 			"separators": [],

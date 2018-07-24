@@ -8,15 +8,16 @@ namespace CastleDBImporter
     [ExecuteInEditMode]
     public class CDBTest : MonoBehaviour
     {
-        public TextAsset CastleDB;
+        public TextAsset CastleDBAsset;
         public bool test;
         void Update()
         {
             if(test)
             {
-                CastleDB castle = new CastleDB(CastleDB);
-                CastleDB.RootNode root = castle.GenerateDB();
-                unityTest mytest = new unityTest(root, unityTest.unityTestvalues.unityTestsampleRow);
+                CastleDB castle = new CastleDB(CastleDBAsset);
+                //List<unityTest> myListofValues = castle.Get<unityTest>();
+                //unityTest test = myListofValues.Get(unityTest.unityTestvalues.unityTestsampleRow)
+                unityTest mytest = new unityTest(castle.Root, unityTest.unityTestvalues.unityTestsampleRow);
                 log("booleanValue: " + mytest.booleanValue);
                 log("colorValue: " + mytest.colorValue);
                 log("enumValue: " + mytest.enumValue);

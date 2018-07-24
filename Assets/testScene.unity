@@ -140,7 +140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9547ba3a1e674cbab854b5180badd44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CastleDB: {fileID: 4900000, guid: 6ea4ca9debd2044f89a5ccc272b7bf09, type: 3}
+  CastleDBAsset: {fileID: 4900000, guid: 6ea4ca9debd2044f89a5ccc272b7bf09, type: 3}
   test: 0
 --- !u!4 &464218247
 Transform:

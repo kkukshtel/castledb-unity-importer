@@ -12,15 +12,37 @@ namespace CastleDBImporter
         //create the objects from the lines
 
         TextAsset DBTextAsset;
+        public RootNode Root {get; private set;}
 
         public CastleDB(TextAsset db)
         {
             DBTextAsset = db;
+            Root = new RootNode(JSON.Parse(DBTextAsset.text));
         }
 
-        public RootNode GenerateDB()
+        public void RegenerateDB()
         {
-            return new RootNode(JSON.Parse(DBTextAsset.text));
+            Root = new RootNode(JSON.Parse(DBTextAsset.text));
+        }
+
+        Dictionary<string,List<GeneratedType>> map;
+        public void CreateObjects()
+        {
+            //TODO: try to do object creation once here
+            //get all the generated types
+            //typeof(genType)?
+            foreach (var sheet in Root.Sheets)
+            {
+                Type genType = Type.GetType(sheet.Name);
+                List<sheet.name> list = new List<sheet.name>();
+                map.Add(sheet.Name, list);
+                for (int i = 0; i < sheet.Rows.Count; i++)
+                {
+                    list.Add(new sheet.name(i));   
+                }
+                //create all the objects
+                //intit all the objects
+            }
         }
 
 
