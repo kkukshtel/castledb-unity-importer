@@ -11,7 +11,7 @@ namespace CastleDBImporter
 {
     public class AssembyBuilderExample
     {
-        public static void BuildAssembly(CastleDB.RootNode root)
+        public static void BuildAssembly(CastleDBParser.RootNode root)
         {
             //TODO: need to delete previous dll, then build this one
             //TODO: need to do path management and create a path if it doesnt exsit and allow for a custom path
@@ -25,20 +25,18 @@ namespace CastleDBImporter
 
             InitTypePath();
 
-            foreach (CastleDB.SheetNode sheet in root.Sheets)
+            foreach (CastleDBParser.SheetNode sheet in root.Sheets)
             {
                 // string scriptPath = "Temp/CastleDBAssembly/"+sheet.Name+".cs";
                 string scriptPath = "Assets/CastleDBImporter/GeneratedTypes/"+sheet.Name+".cs";
                 scripts.Add(scriptPath);
-                string scriptName = Path.GetFileNameWithoutExtension(scriptPath);
-                //geneate the fields with type
+                // string scriptName = Path.GetFileNameWithoutExtension(scriptPath);
+
+                //generate fields
                 string fieldText = "";
-                int typeCount = sheet.Columns.Count;
-                int numRows = sheet.Rows.Count;
-                Debug.Log(sheet.Name + " has " + numRows + " rows");
-                for (int i = 0; i < typeCount; i++)
+                for (int i = 0; i < sheet.Columns.Count; i++)
                 {
-                    CastleDB.ColumnNode column = sheet.Columns[i];
+                    CastleDBParser.ColumnNode column = sheet.Columns[i];
                     string fieldType = CastleDBUtils.GetTypeFromCastleDBColumn(column);
                     if(fieldType != "Enum") //non-enum, normal field
                     {
@@ -55,36 +53,26 @@ namespace CastleDBImporter
                     {
                         string[] enumValueNames = CastleDBUtils.GetEnumValuesFromTypeString(column.TypeStr);
                         string enumEntries = "";
-                        string attribute = "";
-                        string newEnum = "";
                         if(CastleDBUtils.GetTypeNumFromCastleDBTypeString(column.TypeStr) == "10") //flag
                         {
-                            attribute = "[FlagsAttribute]";
-                            fieldText += ("public " + column.Name + "Flag" + " " + column.Name + ";\n");
+                            fieldText += ($"public {column.Name}Flag {column.Name};\n");
                             for (int val = 0; val < enumValueNames.Length; val++)
                             {
                                 enumEntries += (enumValueNames[val] + " = " + (int)Math.Pow(2, val));
                                 if(val + 1 < enumValueNames.Length) {enumEntries += ",";};
                             }
-                            newEnum = attribute + " public enum " + column.Name + "Flag" + " { " + enumEntries + " }";
+                            fieldText += ($"[FlagsAttribute] public enum {column.Name}Flag {{ {enumEntries} }}");
                         }
                         else
                         {
-                            fieldText += ("public " + column.Name + "Enum" + " " + column.Name + ";\n");
+                            fieldText += ($"public {column.Name}Enum {column.Name};\n");
                             for (int val = 0; val < enumValueNames.Length; val++)
                             {
                                 enumEntries += (enumValueNames[val] + " = " + val);
                                 if(val + 1 < enumValueNames.Length) {enumEntries += ",";};
                             }
-                            newEnum = attribute + " public enum " + column.Name + "Enum" + " { " + enumEntries + " }";
+                            fieldText += ($"public enum {column.Name}Enum {{  {enumEntries} }}");
                         }
-                        // string newEnum = string.Format(
-                        // @"{0} public enum {1} 
-                        // {
-                        //     {2}
-                        // }"
-                        // ,attribute,column.Name,enumEntries);
-                        fieldText += newEnum;
                     }
                 }
 
@@ -94,9 +82,9 @@ namespace CastleDBImporter
                 {
                     constructorText += $"SimpleJSON.JSONNode node = root.GetSheetWithName(\"{sheet.Name}\").Rows[(int)line];\n";
                 }
-                for (int i = 0; i < typeCount; i++)
+                for (int i = 0; i < sheet.Columns.Count; i++)
                 {
-                    CastleDB.ColumnNode column = sheet.Columns[i];
+                    CastleDBParser.ColumnNode column = sheet.Columns[i];
                     string castText = CastleDBUtils.GetCastStringFromCastleDBTypeStr(column.TypeStr);
                     string enumCast = "";
                     string typeNum = CastleDBUtils.GetTypeNumFromCastleDBTypeString(column.TypeStr);
@@ -114,7 +102,7 @@ namespace CastleDBImporter
                     }
                     else
                     {
-                        constructorText += $"foreach(var item in node[\"{column.Name}\"]) {{ {column.Name}List.Add(new {column.Name}(item));}}";
+                        constructorText += $"foreach(var item in node[\"{column.Name}\"]) {{ {column.Name}List.Add(new {column.Name}(item));}}\n";
                         // constructorText += $"{column.Name} = new {column.Name}(node[\"{column.Name}\"]);\n";
                     }
                 }
@@ -125,11 +113,16 @@ namespace CastleDBImporter
                 string possibleValuesText = "";
                 if(!sheet.NestedType)
                 {
-                    possibleValuesText += $"public enum {sheet.Name}values {{ \n";
-                    for (int i = 0; i < numRows; i++)
+                    possibleValuesText += $"public enum RowValues {{ \n";
+                    // for (int i = 0; i < sheet.Rows.Count; i++)
+                    // {
+                    //     possibleValuesText += sheet.Rows[i]["id"];
+                    //     if(i+1 < sheet.Rows.Count){ possibleValuesText += ", \n";}
+                    // }
+                    foreach (var name in sheet.RowNames)
                     {
-                        possibleValuesText += sheet.Rows[i]["id"]; //TODO: need to have an identifying global name
-                        if(i+1 < numRows){ possibleValuesText += ", \n";}
+                        possibleValuesText += name;
+                        if(sheet.RowNames.IndexOf(name) + 1 < sheet.RowNames.Count){ possibleValuesText += ", \n";}
                     }
                     possibleValuesText += "\n }";
                 }
@@ -137,17 +130,96 @@ namespace CastleDBImporter
                 string ctor = "";
                 if(!sheet.NestedType)
                 {
-                    ctor = $"public {sheet.Name} (CastleDB.RootNode root, {sheet.Name}values line)";
+                    ctor = $"public {sheet.Name} (CastleDBParser.RootNode root, RowValues line)";
                 }
                 else
                 {
                     ctor = $"public {sheet.Name} (SimpleJSON.JSONNode node)";
                 }
-                string usings = "using UnityEngine;\n using System;\n using System.Collections.Generic;\n using SimpleJSON;\n using CastleDBImporter;\n";
-                string fullClassText = $"{usings} public class {sheet.Name} \n {{ \n {fieldText} \n {possibleValuesText} {ctor} {{ \n {constructorText} \n }}  }}";
+                // string usings = "using UnityEngine;\n using System;\n using System.Collections.Generic;\n using SimpleJSON;\n using CastleDBImporter;\n";
+                string fullClassText = $@"
+using UnityEngine;
+using System;
+using System.Collections.Generic;
+using SimpleJSON;
+using CastleDBImporter;
+namespace CastleDBCompiledTypes
+{{ 
+    public class {sheet.Name}
+    {{
+        {fieldText}
+        {possibleValuesText} 
+        {ctor} 
+        {{
+            {constructorText}
+        }}  
+    }}
+}}";
                 Debug.Log("Generating CDB Class: " + sheet.Name);
                 File.WriteAllText(scriptPath, fullClassText);
             }
+
+            //build the CastleDB file
+            string cdbscriptPath = "Assets/CastleDBImporter/GeneratedTypes/CastleDB.cs";
+            scripts.Add(cdbscriptPath);
+            //fields
+            string cdbfields = "";
+            string cdbconstructorBody = "";
+            string classTexts = "";
+            foreach (CastleDBParser.SheetNode sheet in root.Sheets)
+            {
+                if(sheet.NestedType){continue;} //only write main types to CastleDB
+                cdbfields += $"public {sheet.Name}Type {sheet.Name};\n";
+                cdbconstructorBody += $"{sheet.Name} = new {sheet.Name}Type();";
+
+                //get a list of all the row names
+                classTexts += $"public class {sheet.Name}Type \n {{";
+                foreach (var name in sheet.RowNames)
+                {
+                    // public unityTest sampleRow2 { get { return Get(CastleDBCompiledTypes.unityTest.RowValues.sampleRow2); } }
+                    classTexts += $"public {sheet.Name} {name} {{ get {{ return Get(CastleDBCompiledTypes.{sheet.Name}.RowValues.{name}); }} }} \n";
+                }
+
+                classTexts += $"private {sheet.Name} Get(CastleDBCompiledTypes.{sheet.Name}.RowValues line) {{ return new {sheet.Name}(parsedDB.Root, line); }}\n";
+                classTexts += $@"
+                public {sheet.Name}[] GetAll() 
+                {{
+                    var values = (CastleDBCompiledTypes.{sheet.Name}.RowValues[])Enum.GetValues(typeof(CastleDBCompiledTypes.{sheet.Name}.RowValues));
+                    {sheet.Name}[] returnList = new {sheet.Name}[values.Length];
+                    for (int i = 0; i < values.Length; i++)
+                    {{
+                        returnList[i] = Get(values[i]);
+                    }}
+                    return returnList;
+                }}";
+                classTexts += $"\n }} //END OF {sheet.Name} \n";
+            }
+
+            string fullCastle = $@"
+using UnityEngine;
+using CastleDBImporter;
+using System.Collections.Generic;
+using System;
+
+namespace CastleDBCompiledTypes
+{{
+    public class CastleDB
+    {{
+        static CastleDBParser parsedDB;
+        {cdbfields}
+        public CastleDB(TextAsset castleDBAsset)
+        {{
+            parsedDB = new CastleDBParser(castleDBAsset);
+            {cdbconstructorBody}
+        }}
+        {classTexts}
+    }}
+}}";
+
+            Debug.Log("Generating CastleDB class");
+            File.WriteAllText(cdbscriptPath, fullCastle);
+
+
 
             var assemblyBuilder = new AssemblyBuilder(outputAssembly, scripts.ToArray());
 

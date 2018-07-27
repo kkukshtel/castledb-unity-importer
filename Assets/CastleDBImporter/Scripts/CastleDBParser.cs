@@ -5,7 +5,7 @@ using System;
 
 namespace CastleDBImporter
 {
-    public class CastleDB
+    public class CastleDBParser
     {
         //each sheet is its own type and needs its own assembly (for now)
         //create the type from the columns
@@ -14,7 +14,7 @@ namespace CastleDBImporter
         TextAsset DBTextAsset;
         public RootNode Root {get; private set;}
 
-        public CastleDB(TextAsset db)
+        public CastleDBParser(TextAsset db)
         {
             DBTextAsset = db;
             Root = new RootNode(JSON.Parse(DBTextAsset.text));
@@ -25,25 +25,25 @@ namespace CastleDBImporter
             Root = new RootNode(JSON.Parse(DBTextAsset.text));
         }
 
-        Dictionary<string,List<GeneratedType>> map;
-        public void CreateObjects()
-        {
-            //TODO: try to do object creation once here
-            //get all the generated types
-            //typeof(genType)?
-            foreach (var sheet in Root.Sheets)
-            {
-                Type genType = Type.GetType(sheet.Name);
-                List<sheet.name> list = new List<sheet.name>();
-                map.Add(sheet.Name, list);
-                for (int i = 0; i < sheet.Rows.Count; i++)
-                {
-                    list.Add(new sheet.name(i));   
-                }
-                //create all the objects
-                //intit all the objects
-            }
-        }
+        // Dictionary<string,List<GeneratedType>> map;
+        // public void CreateObjects()
+        // {
+        //     //TODO: try to do object creation once here
+        //     //get all the generated types
+        //     //typeof(genType)?
+        //     foreach (var sheet in Root.Sheets)
+        //     {
+        //         Type genType = Type.GetType(sheet.Name);
+        //         List<sheet.name> list = new List<sheet.name>();
+        //         map.Add(sheet.Name, list);
+        //         for (int i = 0; i < sheet.Rows.Count; i++)
+        //         {
+        //             list.Add(new sheet.name(i));   
+        //         }
+        //         //create all the objects
+        //         //intit all the objects
+        //     }
+        // }
 
 
         public class RootNode
@@ -79,8 +79,18 @@ namespace CastleDBImporter
             public string Name { get; protected set; }
             public List<ColumnNode> Columns { get; protected set; }
             public List<SimpleJSON.JSONNode> Rows { get; protected set; }
-            // public List<SeperatorNode> Seperators { get; protected set; }
-            // public List<PropertyNode> Properties { get; protected set; }
+            public List<string> RowNames
+            {
+                get
+                {
+                    List<string> names = new List<string>();
+                    for (int i = 0; i < Rows.Count; i++)
+                    {
+                        names.Add(Rows[i]["id"]); //TODO: need to have an identifying global name
+                    }
+                    return names;
+                }
+            }
             public SheetNode(JSONNode sheetValue)
             {
                 value = sheetValue;

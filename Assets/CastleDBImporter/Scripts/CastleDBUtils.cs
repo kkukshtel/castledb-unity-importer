@@ -10,7 +10,7 @@ namespace CastleDBImporter
 {
     public static class CastleDBUtils
     {
-        public static string GetTypeFromCastleDBColumn(CastleDB.ColumnNode column)
+        public static string GetTypeFromCastleDBColumn(CastleDBParser.ColumnNode column)
         {
             string typeString = GetTypeNumFromCastleDBTypeString(column.TypeStr);
             switch (typeString)
@@ -85,15 +85,15 @@ namespace CastleDBImporter
         //     return GetTypeFromCastleDBTypeStr(GetRawTypeStringFromColumnName(root, sheetName, columnName));
         // }
 
-        public static string GetTypeNumFromRawTypeString(CastleDB.RootNode root, string sheetName, string columnName)
+        public static string GetTypeNumFromRawTypeString(CastleDBParser.RootNode root, string sheetName, string columnName)
         {
             return GetTypeNumFromCastleDBTypeString(GetRawTypeStringFromColumnName(root,sheetName,columnName));
         }
 
-        public static string GetRawTypeStringFromColumnName(CastleDB.RootNode root, string sheetName, string columnName)
+        public static string GetRawTypeStringFromColumnName(CastleDBParser.RootNode root, string sheetName, string columnName)
         {
-            CastleDB.SheetNode sheet = root.Sheets.FirstOrDefault(x => x.Name == sheetName);
-            CastleDB.ColumnNode column = sheet.Columns.FirstOrDefault(x => x.Name == columnName);
+            CastleDBParser.SheetNode sheet = root.Sheets.FirstOrDefault(x => x.Name == sheetName);
+            CastleDBParser.ColumnNode column = sheet.Columns.FirstOrDefault(x => x.Name == columnName);
             Debug.Log(column.TypeStr);
             return column.TypeStr;
         }

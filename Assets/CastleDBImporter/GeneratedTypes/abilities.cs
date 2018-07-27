@@ -1,21 +1,28 @@
+
 using UnityEngine;
- using System;
- using System.Collections.Generic;
- using SimpleJSON;
- using CastleDBImporter;
- public class abilities 
- { 
- public string id;
+using System;
+using System.Collections.Generic;
+using SimpleJSON;
+using CastleDBImporter;
+namespace CastleDBCompiledTypes
+{ 
+    public class abilities
+    {
+        public string id;
 public string realname;
 public bool boolValueSheet2;
- 
- public enum abilitiesvalues { 
+
+        public enum RowValues { 
 ability1, 
 abilit2
- } public abilities (CastleDB.RootNode root, abilitiesvalues line) { 
- SimpleJSON.JSONNode node = root.GetSheetWithName("abilities").Rows[(int)line];
+ } 
+        public abilities (CastleDBParser.RootNode root, RowValues line) 
+        {
+            SimpleJSON.JSONNode node = root.GetSheetWithName("abilities").Rows[(int)line];
 id = node["id"];
 realname = node["realname"];
 boolValueSheet2 = node["boolValueSheet2"].AsBool;
- 
- }  }
+
+        }  
+    }
+}
