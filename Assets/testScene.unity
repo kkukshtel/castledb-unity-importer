@@ -137,7 +137,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 464218245}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9547ba3a1e674cbab854b5180badd44, type: 3}
+  m_Script: {fileID: 11500000, guid: aff69bb0f1d004fc287790e172daa2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   CastleDBAsset: {fileID: 4900000, guid: 6ea4ca9debd2044f89a5ccc272b7bf09, type: 3}

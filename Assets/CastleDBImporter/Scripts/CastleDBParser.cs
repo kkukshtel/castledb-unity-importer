@@ -2,21 +2,20 @@ using UnityEngine;
 using System.Collections.Generic;
 using SimpleJSON;
 using System;
+using UnityEditor;
 
 namespace CastleDBImporter
 {
     public class CastleDBParser
     {
-        //each sheet is its own type and needs its own assembly (for now)
-        //create the type from the columns
-        //create the objects from the lines
-
         TextAsset DBTextAsset;
         public RootNode Root {get; private set;}
+        public static CastleDBConfig Config { get; private set;}
 
         public CastleDBParser(TextAsset db)
         {
             DBTextAsset = db;
+            SetImporterOptions();
             Root = new RootNode(JSON.Parse(DBTextAsset.text));
         }
 
@@ -25,26 +24,12 @@ namespace CastleDBImporter
             Root = new RootNode(JSON.Parse(DBTextAsset.text));
         }
 
-        // Dictionary<string,List<GeneratedType>> map;
-        // public void CreateObjects()
-        // {
-        //     //TODO: try to do object creation once here
-        //     //get all the generated types
-        //     //typeof(genType)?
-        //     foreach (var sheet in Root.Sheets)
-        //     {
-        //         Type genType = Type.GetType(sheet.Name);
-        //         List<sheet.name> list = new List<sheet.name>();
-        //         map.Add(sheet.Name, list);
-        //         for (int i = 0; i < sheet.Rows.Count; i++)
-        //         {
-        //             list.Add(new sheet.name(i));   
-        //         }
-        //         //create all the objects
-        //         //intit all the objects
-        //     }
-        // }
-
+        void SetImporterOptions()
+        {
+            var guids = AssetDatabase.FindAssets("CastleDBConfig t:CastleDBConfig");
+            var path = AssetDatabase.GUIDToAssetPath(guids[0]);
+            Config = AssetDatabase.LoadAssetAtPath(path, typeof(CastleDBConfig)) as CastleDBConfig;
+        }
 
         public class RootNode
         {
@@ -86,7 +71,7 @@ namespace CastleDBImporter
                     List<string> names = new List<string>();
                     for (int i = 0; i < Rows.Count; i++)
                     {
-                        names.Add(Rows[i]["id"]); //TODO: need to have an identifying global name
+                        names.Add(Rows[i][CastleDBParser.Config.GUIDColumnName]);
                     }
                     return names;
                 }

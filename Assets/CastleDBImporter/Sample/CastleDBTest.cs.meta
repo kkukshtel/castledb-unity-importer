@@ -1,10 +1,9 @@
 fileFormatVersion: 2
-guid: b9547ba3a1e674cbab854b5180badd44
+guid: aff69bb0f1d004fc287790e172daa2a9
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences:
-  - CastleDB: {fileID: 4900000, guid: 6ea4ca9debd2044f89a5ccc272b7bf09, type: 3}
+  defaultReferences: []
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

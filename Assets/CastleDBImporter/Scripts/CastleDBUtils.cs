@@ -40,7 +40,6 @@ namespace CastleDBImporter
 
         public static string GetCastStringFromCastleDBTypeStr(string inputString)
         {
-            JSONNode value;
             //taken from the possibilites of casting in SimpleJSON
             string typeString = GetTypeNumFromCastleDBTypeString(inputString);
             switch (typeString)
@@ -80,10 +79,11 @@ namespace CastleDBImporter
             return enumvalues;
         }
 
-        // public static Type GetTypeForDBColumnName(CastleDB.RootNode root, string sheetName, string columnName)
-        // {
-        //     return GetTypeFromCastleDBTypeStr(GetRawTypeStringFromColumnName(root, sheetName, columnName));
-        // }
+        /* Unused but maybe useful in the future
+        public static Type GetTypeForDBColumnName(CastleDB.RootNode root, string sheetName, string columnName)
+        {
+            return GetTypeFromCastleDBTypeStr(GetRawTypeStringFromColumnName(root, sheetName, columnName));
+        }
 
         public static string GetTypeNumFromRawTypeString(CastleDBParser.RootNode root, string sheetName, string columnName)
         {
@@ -97,5 +97,6 @@ namespace CastleDBImporter
             Debug.Log(column.TypeStr);
             return column.TypeStr;
         }
+        */
     }
 }

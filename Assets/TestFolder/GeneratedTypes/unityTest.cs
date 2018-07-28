@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using SimpleJSON;
 using CastleDBImporter;
-namespace CastleDBCompiledTypes
+namespace CompiledTypes
 { 
     public class unityTest
     {
