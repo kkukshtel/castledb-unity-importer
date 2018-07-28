@@ -121,7 +121,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 464218247}
-  - component: {fileID: 464218246}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -129,19 +128,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &464218246
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 464218245}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aff69bb0f1d004fc287790e172daa2a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CastleDBAsset: {fileID: 4900000, guid: 6ea4ca9debd2044f89a5ccc272b7bf09, type: 3}
-  test: 0
 --- !u!4 &464218247
 Transform:
   m_ObjectHideFlags: 0

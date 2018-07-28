@@ -47,16 +47,6 @@
 					"typeStr": "6:abilities",
 					"name": "ability",
 					"display": null
-				},
-				{
-					"typeStr": "13",
-					"name": "fileValue",
-					"display": null
-				},
-				{
-					"typeStr": "7",
-					"name": "imageValue",
-					"display": null
 				}
 			],
 			"lines": [
@@ -67,8 +57,6 @@
 					"enumValue": 1,
 					"flagValue": 11,
 					"colorValue": 13893889,
-					"fileValue": "Martin_Nicolausson_INT_16.jpg",
-					"imageValue": "fa589fa29f941683fe27a1b3d9c6daf3",
 					"id": "unityTestsampleRow",
 					"myInt": 69100,
 					"items": [
@@ -88,7 +76,7 @@
 						},
 						{
 							"id": "item2",
-							"itemAttack": 999,
+							"itemAttack": 23333,
 							"itemAbilites": [
 								{
 									"id": "ability10",
@@ -108,10 +96,68 @@
 					"enumValue": 1,
 					"flagValue": 4,
 					"colorValue": 0,
-					"fileValue": "",
-					"imageValue": "",
 					"items": [],
 					"ability": "abilit2"
+				},
+				{
+					"id": "myNewRow",
+					"textValue": "mynextvalue",
+					"booleanValue": true,
+					"myInt": 123,
+					"items": [],
+					"floatValue": 222.1,
+					"enumValue": 1,
+					"flagValue": 1,
+					"colorValue": 0,
+					"ability": "ability1"
+				},
+				{
+					"id": "doesthisbreak",
+					"textValue": "sttteee",
+					"booleanValue": true,
+					"myInt": 123333,
+					"items": [],
+					"floatValue": 23.2,
+					"enumValue": 0,
+					"flagValue": 2,
+					"colorValue": 0,
+					"ability": "ability1"
+				},
+				{
+					"id": "anotherbreakingtest",
+					"textValue": "are you there",
+					"booleanValue": true,
+					"myInt": 12,
+					"items": [],
+					"floatValue": 45.55,
+					"enumValue": 1,
+					"flagValue": 12,
+					"colorValue": 0,
+					"ability": "ability1"
+				},
+				{
+					"id": "rebecca",
+					"textValue": "test",
+					"booleanValue": true,
+					"myInt": 2444,
+					"items": [],
+					"floatValue": 34.4444,
+					"enumValue": 0,
+					"flagValue": 2,
+					"colorValue": 0,
+					"ability": "ability1"
+				},
+				{
+					"id": "asmdeffiles",
+					"textValue": "here",
+					"booleanValue": true,
+					"myInt": 0,
+					"items": [],
+					"floatValue": 0,
+					"enumValue": 0,
+					"flagValue": 0,
+					"colorValue": 0,
+					"ability": "ability1"
 				}
 			],
 			"separators": [],

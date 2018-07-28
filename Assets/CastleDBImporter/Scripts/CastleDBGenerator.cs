@@ -201,6 +201,7 @@ namespace {CastleDBParser.Config.GeneratedTypesNamespace}
             Debug.Log("Generating CastleDB class");
             File.WriteAllText(cdbscriptPath, fullCastle);
             AssetDatabase.Refresh();
+
         }
 
         public static void InitTypePath()

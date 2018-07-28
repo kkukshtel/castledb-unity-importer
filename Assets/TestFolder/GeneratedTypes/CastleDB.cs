@@ -20,6 +20,11 @@ public abilitiesType abilities;
         public class unityTestType 
  {public unityTest unityTestsampleRow { get { return Get(CompiledTypes.unityTest.RowValues.unityTestsampleRow); } } 
 public unityTest sampleRow2 { get { return Get(CompiledTypes.unityTest.RowValues.sampleRow2); } } 
+public unityTest myNewRow { get { return Get(CompiledTypes.unityTest.RowValues.myNewRow); } } 
+public unityTest doesthisbreak { get { return Get(CompiledTypes.unityTest.RowValues.doesthisbreak); } } 
+public unityTest anotherbreakingtest { get { return Get(CompiledTypes.unityTest.RowValues.anotherbreakingtest); } } 
+public unityTest rebecca { get { return Get(CompiledTypes.unityTest.RowValues.rebecca); } } 
+public unityTest asmdeffiles { get { return Get(CompiledTypes.unityTest.RowValues.asmdeffiles); } } 
 private unityTest Get(CompiledTypes.unityTest.RowValues line) { return new unityTest(parsedDB.Root, line); }
 
                 public unityTest[] GetAll() 
