@@ -9,51 +9,65 @@ namespace CompiledTypes
     public class CastleDB
     {
         static CastleDBParser parsedDB;
-        public unityTestType unityTest;
-public abilitiesType abilities;
+        public CreaturesType Creatures;
+public ItemsType Items;
+public ModifiersType Modifiers;
 
         public CastleDB(TextAsset castleDBAsset)
         {
             parsedDB = new CastleDBParser(castleDBAsset);
-            unityTest = new unityTestType();abilities = new abilitiesType();
+            Creatures = new CreaturesType();Items = new ItemsType();Modifiers = new ModifiersType();
         }
-        public class unityTestType 
- {public unityTest unityTestsampleRow { get { return Get(CompiledTypes.unityTest.RowValues.unityTestsampleRow); } } 
-public unityTest sampleRow2 { get { return Get(CompiledTypes.unityTest.RowValues.sampleRow2); } } 
-public unityTest myNewRow { get { return Get(CompiledTypes.unityTest.RowValues.myNewRow); } } 
-public unityTest doesthisbreak { get { return Get(CompiledTypes.unityTest.RowValues.doesthisbreak); } } 
-public unityTest anotherbreakingtest { get { return Get(CompiledTypes.unityTest.RowValues.anotherbreakingtest); } } 
-public unityTest rebecca { get { return Get(CompiledTypes.unityTest.RowValues.rebecca); } } 
-public unityTest asmdeffiles { get { return Get(CompiledTypes.unityTest.RowValues.asmdeffiles); } } 
-private unityTest Get(CompiledTypes.unityTest.RowValues line) { return new unityTest(parsedDB.Root, line); }
+        public class CreaturesType 
+ {public Creatures Squid { get { return Get(CompiledTypes.Creatures.RowValues.Squid); } } 
+public Creatures Bear { get { return Get(CompiledTypes.Creatures.RowValues.Bear); } } 
+public Creatures Dragon { get { return Get(CompiledTypes.Creatures.RowValues.Dragon); } } 
+private Creatures Get(CompiledTypes.Creatures.RowValues line) { return new Creatures(parsedDB.Root, line); }
 
-                public unityTest[] GetAll() 
+                public Creatures[] GetAll() 
                 {
-                    var values = (CompiledTypes.unityTest.RowValues[])Enum.GetValues(typeof(CompiledTypes.unityTest.RowValues));
-                    unityTest[] returnList = new unityTest[values.Length];
+                    var values = (CompiledTypes.Creatures.RowValues[])Enum.GetValues(typeof(CompiledTypes.Creatures.RowValues));
+                    Creatures[] returnList = new Creatures[values.Length];
                     for (int i = 0; i < values.Length; i++)
                     {
                         returnList[i] = Get(values[i]);
                     }
                     return returnList;
                 }
- } //END OF unityTest 
-public class abilitiesType 
- {public abilities ability1 { get { return Get(CompiledTypes.abilities.RowValues.ability1); } } 
-public abilities abilit2 { get { return Get(CompiledTypes.abilities.RowValues.abilit2); } } 
-private abilities Get(CompiledTypes.abilities.RowValues line) { return new abilities(parsedDB.Root, line); }
+ } //END OF Creatures 
+public class ItemsType 
+ {public Items HealingPotion { get { return Get(CompiledTypes.Items.RowValues.HealingPotion); } } 
+public Items PoisonPotion { get { return Get(CompiledTypes.Items.RowValues.PoisonPotion); } } 
+public Items UltraSword { get { return Get(CompiledTypes.Items.RowValues.UltraSword); } } 
+private Items Get(CompiledTypes.Items.RowValues line) { return new Items(parsedDB.Root, line); }
 
-                public abilities[] GetAll() 
+                public Items[] GetAll() 
                 {
-                    var values = (CompiledTypes.abilities.RowValues[])Enum.GetValues(typeof(CompiledTypes.abilities.RowValues));
-                    abilities[] returnList = new abilities[values.Length];
+                    var values = (CompiledTypes.Items.RowValues[])Enum.GetValues(typeof(CompiledTypes.Items.RowValues));
+                    Items[] returnList = new Items[values.Length];
                     for (int i = 0; i < values.Length; i++)
                     {
                         returnList[i] = Get(values[i]);
                     }
                     return returnList;
                 }
- } //END OF abilities 
+ } //END OF Items 
+public class ModifiersType 
+ {public Modifiers poison { get { return Get(CompiledTypes.Modifiers.RowValues.poison); } } 
+public Modifiers enchanted { get { return Get(CompiledTypes.Modifiers.RowValues.enchanted); } } 
+private Modifiers Get(CompiledTypes.Modifiers.RowValues line) { return new Modifiers(parsedDB.Root, line); }
+
+                public Modifiers[] GetAll() 
+                {
+                    var values = (CompiledTypes.Modifiers.RowValues[])Enum.GetValues(typeof(CompiledTypes.Modifiers.RowValues));
+                    Modifiers[] returnList = new Modifiers[values.Length];
+                    for (int i = 0; i < values.Length; i++)
+                    {
+                        returnList[i] = Get(values[i]);
+                    }
+                    return returnList;
+                }
+ } //END OF Modifiers 
 
     }
 }

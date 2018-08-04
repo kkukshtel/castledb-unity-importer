@@ -27,7 +27,9 @@ namespace CastleDBImporter
                     return "Enum";
                 case "10": //enum flag
                     return "Enum";
-                case "8": //nested type
+                case "6": //ref type
+                    return GetRefTypeFromTypeString(column.TypeStr);
+                case "8": //nested list type
                     return column.Name;
                 case "11": //color
                      //TODO: fix color encoding  https://docs.unity3d.com/ScriptReference/ColorUtility.TryParseHtmlString.html
@@ -68,6 +70,13 @@ namespace CastleDBImporter
             Char delimiter = ':';
             String[] typeString = inputString.Split(delimiter);
             return typeString[0];
+        }
+
+        public static string GetRefTypeFromTypeString(string inputString)
+        {
+            Char delimiter = ':';
+            String[] typeString = inputString.Split(delimiter);
+            return typeString[1];
         }
 
         public static string[] GetEnumValuesFromTypeString(string inputString)

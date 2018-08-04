@@ -79,7 +79,20 @@ namespace CastleDBImporter
                     string castText = CastleDBUtils.GetCastStringFromCastleDBTypeStr(column.TypeStr);
                     string enumCast = "";
                     string typeNum = CastleDBUtils.GetTypeNumFromCastleDBTypeString(column.TypeStr);
-                    if(typeNum != "8")
+                    if(typeNum == "8")
+                    {
+                        //list type
+                        constructorText += $"foreach(var item in node[\"{column.Name}\"]) {{ {column.Name}List.Add(new {column.Name}(root, item));}}\n";
+                    }
+                    else if(typeNum == "6")
+                    {
+                        //working area:
+                        //ref type
+                        string refType = CastleDBUtils.GetTypeFromCastleDBColumn(column);
+                        //look up the line based on the passed in row
+                        constructorText += $"{column.Name} = new {CastleDBParser.Config.GeneratedTypesNamespace}.{refType}(root,{CastleDBParser.Config.GeneratedTypesNamespace}.{refType}.GetRowValue(node[\"{column.Name}\"]));\n";
+                    }
+                    else
                     {
                         if(typeNum == "10")
                         {
@@ -90,10 +103,6 @@ namespace CastleDBImporter
                             enumCast = $"({column.Name}Enum)";
                         }
                         constructorText += $"{column.Name} = {enumCast}node[\"{column.Name}\"]{castText};\n";
-                    }
-                    else
-                    {
-                        constructorText += $"foreach(var item in node[\"{column.Name}\"]) {{ {column.Name}List.Add(new {column.Name}(item));}}\n";
                     }
                 }
 
@@ -110,6 +119,24 @@ namespace CastleDBImporter
                     possibleValuesText += "\n }";
                 }
 
+                string getMethodText = "";
+                if(!sheet.NestedType)
+                {
+                    getMethodText += $@"
+public static {sheet.Name}.RowValues GetRowValue(string name)
+{{
+    var values = (RowValues[])Enum.GetValues(typeof(RowValues));
+    for (int i = 0; i < values.Length; i++)
+    {{
+        if(values[i].ToString() == name)
+        {{
+            return values[i];
+        }}
+    }}
+    return values[0];
+}}";
+                }
+
                 string ctor = "";
                 if(!sheet.NestedType)
                 {
@@ -117,7 +144,7 @@ namespace CastleDBImporter
                 }
                 else
                 {
-                    ctor = $"public {sheet.Name} (SimpleJSON.JSONNode node)";
+                    ctor = $"public {sheet.Name} (CastleDBParser.RootNode root, SimpleJSON.JSONNode node)";
                 }
                 // string usings = "using UnityEngine;\n using System;\n using System.Collections.Generic;\n using SimpleJSON;\n using CastleDBImporter;\n";
                 string fullClassText = $@"
@@ -136,6 +163,7 @@ namespace {CastleDBParser.Config.GeneratedTypesNamespace}
         {{
             {constructorText}
         }}  
+        {getMethodText}
     }}
 }}";
                 Debug.Log("Generating CDB Class: " + sheet.Name);

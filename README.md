@@ -36,6 +36,7 @@ Because this does code generation, it's important to understand what is happenin
 
 ## Limitations  
 * All sheets need to have some sort of GUID column that defines the name of a row. This defaults to "id" with a string type.
+* Objects are currently created at runtime and do not share direct internal references, so circular references of any kind will likely break object creation. Don't make a line in a sheet with a reference field that points to a line in another sheet with a reference field that points to an object in the first sheet.
 * A current annoyance is that if you add more columns or rows to a given type, the solution in Unity will properly update but you're need to reload your solution in your editor. This manifests as previous mentions of your type in code saying "Can't be found". To fix this, just reload the assembly. In VSCode, this is as easy as just clicking your .sln file at the bottom of the window and reselecting it.
 * Currently there is no validation of column names, so column names in CastleDB need to be valid field names in C#. I.E. don't use spaces in your column names, weird characters, etc.
 * The above item also applies to text in whatever you decide to call your GUID column because these names become strongly typed. Because of this, make your GUID name something easy to remember/use, and have an additional text column that is the actual name of your row. 
@@ -43,6 +44,7 @@ Because this does code generation, it's important to understand what is happenin
 
 ## TODO  
 * Add in Color support
+* Need to add reference fields in to create new types of that reference.
 * Figure out a better guide for adding CastleDB Custom Trypes
 * Document way to add in your own CustomType to match with a predefined Type in Unity
 * Currently do not have file types or Image types implemented. This would require some preconfiguration steps that seem unique to every user so I'm not sure if it should be added.

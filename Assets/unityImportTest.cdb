@@ -1,7 +1,7 @@
 {
 	"sheets": [
 		{
-			"name": "unityTest",
+			"name": "Creatures",
 			"columns": [
 				{
 					"typeStr": "1",
@@ -9,162 +9,104 @@
 				},
 				{
 					"typeStr": "1",
-					"name": "textValue",
-					"display": null
+					"name": "Name"
 				},
 				{
 					"typeStr": "2",
-					"name": "booleanValue",
-					"display": null
+					"name": "attacksPlayer"
 				},
 				{
 					"typeStr": "3",
-					"name": "myInt"
-				},
-				{
-					"typeStr": "8",
-					"name": "items"
+					"name": "BaseDamage"
 				},
 				{
 					"typeStr": "4",
-					"name": "floatValue"
+					"name": "DamageModifier"
 				},
 				{
-					"typeStr": "5:enum1,enum2",
-					"name": "enumValue",
-					"display": null
+					"typeStr": "8",
+					"name": "Drops"
 				},
 				{
-					"typeStr": "10:oneFlag,twoFlag,threeFlag,fourFlag",
-					"name": "flagValue"
+					"typeStr": "5:Sound1,Sound2",
+					"name": "DeathSound"
+				},
+				{
+					"typeStr": "10:Forest,Mountains,Lake,Plains",
+					"name": "SpawnAreas"
 				},
 				{
 					"typeStr": "11",
 					"name": "colorValue",
 					"display": null
-				},
-				{
-					"typeStr": "6:abilities",
-					"name": "ability",
-					"display": null
 				}
 			],
 			"lines": [
 				{
-					"textValue": "testText",
-					"booleanValue": true,
-					"floatValue": 42.42,
-					"enumValue": 1,
-					"flagValue": 11,
-					"colorValue": 13893889,
-					"id": "unityTestsampleRow",
-					"myInt": 69100,
-					"items": [
+					"id": "Squid",
+					"colorValue": 0,
+					"Name": "The Giant Squid",
+					"attacksPlayer": true,
+					"BaseDamage": 5,
+					"Drops": [
 						{
-							"id": "item1",
-							"itemAttack": 100,
-							"itemAbilites": [
+							"item": "HealingPotion",
+							"DropChance": 20,
+							"PossibleEffects": [
 								{
-									"id": "ability1",
-									"effect": "destory stuff"
-								},
-								{
-									"id": "ability2",
-									"effect": "heal stuff"
-								}
-							]
-						},
-						{
-							"id": "item2",
-							"itemAttack": 23333,
-							"itemAbilites": [
-								{
-									"id": "ability10",
-									"effect": "move stuff"
+									"EffectChance": 10,
+									"effect": "enchanted"
 								}
 							]
 						}
 					],
-					"ability": "ability1"
+					"DamageModifier": 1,
+					"DeathSound": 0,
+					"SpawnAreas": 4
 				},
 				{
-					"id": "sampleRow2",
-					"textValue": "anotherTextvaue",
-					"booleanValue": false,
-					"myInt": 0,
-					"floatValue": 32.22,
-					"enumValue": 1,
-					"flagValue": 4,
+					"id": "Bear",
 					"colorValue": 0,
-					"items": [],
-					"ability": "abilit2"
+					"Name": "Above Average Bear",
+					"attacksPlayer": false,
+					"BaseDamage": 10,
+					"Drops": [],
+					"DamageModifier": 2.2,
+					"DeathSound": 1,
+					"SpawnAreas": 9
 				},
 				{
-					"id": "myNewRow",
-					"textValue": "mynextvalue",
-					"booleanValue": true,
-					"myInt": 123,
-					"items": [],
-					"floatValue": 222.1,
-					"enumValue": 1,
-					"flagValue": 1,
+					"id": "Dragon",
 					"colorValue": 0,
-					"ability": "ability1"
-				},
-				{
-					"id": "doesthisbreak",
-					"textValue": "sttteee",
-					"booleanValue": true,
-					"myInt": 123333,
-					"items": [],
-					"floatValue": 23.2,
-					"enumValue": 0,
-					"flagValue": 2,
-					"colorValue": 0,
-					"ability": "ability1"
-				},
-				{
-					"id": "anotherbreakingtest",
-					"textValue": "are you there",
-					"booleanValue": true,
-					"myInt": 12,
-					"items": [],
-					"floatValue": 45.55,
-					"enumValue": 1,
-					"flagValue": 12,
-					"colorValue": 0,
-					"ability": "ability1"
-				},
-				{
-					"id": "rebecca",
-					"textValue": "test",
-					"booleanValue": true,
-					"myInt": 2444,
-					"items": [],
-					"floatValue": 34.4444,
-					"enumValue": 0,
-					"flagValue": 2,
-					"colorValue": 0,
-					"ability": "ability1"
-				},
-				{
-					"id": "asmdeffiles",
-					"textValue": "here",
-					"booleanValue": true,
-					"myInt": 0,
-					"items": [],
-					"floatValue": 0,
-					"enumValue": 0,
-					"flagValue": 0,
-					"colorValue": 0,
-					"ability": "ability1"
+					"Name": "Gilded Dragon",
+					"attacksPlayer": false,
+					"BaseDamage": 20,
+					"Drops": [
+						{
+							"item": "UltraSword",
+							"DropChance": 40,
+							"PossibleEffects": [
+								{
+									"effect": "poison",
+									"EffectChance": 10
+								},
+								{
+									"effect": "enchanted",
+									"EffectChance": 30
+								}
+							]
+						}
+					],
+					"DamageModifier": 5.6,
+					"DeathSound": 1,
+					"SpawnAreas": 10
 				}
 			],
 			"separators": [],
 			"props": {}
 		},
 		{
-			"name": "abilities",
+			"name": "Items",
 			"columns": [
 				{
 					"typeStr": "0",
@@ -172,30 +114,68 @@
 				},
 				{
 					"typeStr": "1",
-					"name": "realname"
+					"name": "name"
 				},
 				{
-					"typeStr": "2",
-					"name": "boolValueSheet2"
+					"typeStr": "3",
+					"name": "Weight"
 				}
 			],
 			"lines": [
 				{
-					"boolValueSheet2": true,
-					"realname": "awesomeness",
-					"id": "ability1"
+					"id": "HealingPotion",
+					"name": "Healing Potion",
+					"Weight": 10
 				},
 				{
-					"boolValueSheet2": true,
-					"realname": "craptastic",
-					"id": "abilit2"
+					"id": "PoisonPotion",
+					"name": "Poison Potion",
+					"Weight": 15
+				},
+				{
+					"id": "UltraSword",
+					"name": "Ultra Sword",
+					"Weight": 50
 				}
 			],
 			"separators": [],
 			"props": {}
 		},
 		{
-			"name": "unityTest@items",
+			"name": "Modifiers",
+			"columns": [
+				{
+					"typeStr": "0",
+					"name": "id"
+				},
+				{
+					"typeStr": "1",
+					"name": "name",
+					"display": null
+				},
+				{
+					"typeStr": "3",
+					"name": "change",
+					"display": null
+				}
+			],
+			"lines": [
+				{
+					"id": "poison",
+					"name": "Poisoned",
+					"change": -10
+				},
+				{
+					"id": "enchanted",
+					"name": "Enchanted",
+					"change": 15
+				}
+			],
+			"separators": [],
+			"props": {}
+		},
+		{
+			"name": "Creatures@Drops",
 			"props": {
 				"hide": true
 			},
@@ -203,23 +183,23 @@
 			"lines": [],
 			"columns": [
 				{
-					"typeStr": "1",
-					"name": "id",
-					"display": null
+					"typeStr": "6:Items",
+					"name": "item"
 				},
 				{
 					"typeStr": "3",
-					"name": "itemAttack"
+					"name": "DropChance",
+					"display": null
 				},
 				{
 					"typeStr": "8",
-					"name": "itemAbilites",
+					"name": "PossibleEffects",
 					"display": null
 				}
 			]
 		},
 		{
-			"name": "unityTest@items@itemAbilites",
+			"name": "Creatures@Drops@PossibleEffects",
 			"props": {
 				"hide": true
 			},
@@ -227,13 +207,12 @@
 			"lines": [],
 			"columns": [
 				{
-					"typeStr": "1",
-					"name": "id",
-					"display": null
+					"typeStr": "6:Modifiers",
+					"name": "effect"
 				},
 				{
-					"typeStr": "1",
-					"name": "effect",
+					"typeStr": "3",
+					"name": "EffectChance",
 					"display": null
 				}
 			]

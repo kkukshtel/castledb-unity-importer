@@ -11,22 +11,22 @@ public class CastleDBTest : MonoBehaviour
         if(test)
         {
             CastleDB DB = new CastleDB(CastleDBAsset);
-            unityTest testObject = DB.unityTest.unityTestsampleRow;
+            Creatures creature = DB.Creatures.Dragon;
 
-            Debug.Log("textValue: " + testObject.textValue);
-            Debug.Log("booleanValue: " + testObject.booleanValue);
-            Debug.Log("colorValue: " + testObject.colorValue);
-            Debug.Log("enumValue: " + testObject.enumValue);
-            Debug.Log("flagValue: " + testObject.flagValue);
-            Debug.Log("floatValue: " + testObject.floatValue);
-            foreach (var item in testObject.itemsList)
-            {
-                Debug.Log($"item {item.id} has attack {item.itemAttack}");
-                foreach (var ability in item.itemAbilitesList)
-                {
-                    Debug.Log($"item has ability {ability.id} with effect {ability.effect}");
-                }
-            }
+            // Debug.Log("[string] name: " + creature.Name);
+            // Debug.Log("[bool] attacks player: " + creature.attacksPlayer);
+            // Debug.Log("[int] base damage: " + creature.BaseDamage);
+            // Debug.Log("[float] damage modifier: " + creature.DamageModifier);
+            // Debug.Log("[enum] death sound: " + creature.DeathSound);
+            // Debug.Log("[flag enum] spawn areas: " + creature.SpawnAreas);
+            // foreach (var item in creature.DropsList)
+            // {
+            //     Debug.Log($"{creature.Name} drops item {item.item} at rate {item.dropChance}");
+            //     foreach (var ability in item.itemAbilitesList)
+            //     {
+            //         Debug.Log($"item has ability {ability.id} with effect {ability.effect}");
+            //     }
+            // }
             
             test = false;
         }
