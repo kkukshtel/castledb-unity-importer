@@ -12,21 +12,21 @@ public class CastleDBTest : MonoBehaviour
         if(test)
         {
             CastleDB DB = new CastleDB(CastleDBAsset);
-            // Items item = DB.Creatures.Bear.DropsList[0].item;
-            // Debug.Log("[string] name: " + creature.Name);
-            // Debug.Log("[bool] attacks player: " + creature.attacksPlayer);
-            // Debug.Log("[int] base damage: " + creature.BaseDamage);
-            // Debug.Log("[float] damage modifier: " + creature.DamageModifier);
-            // Debug.Log("[enum] death sound: " + creature.DeathSound);
-            // Debug.Log("[flag enum] spawn areas: " + creature.SpawnAreas);
-            // foreach (var item in creature.DropsList)
-            // {
-            //     Debug.Log($"{creature.Name} drops item {item.item} at rate {item.dropChance}");
-            //     foreach (var ability in item.itemAbilitesList)
-            //     {
-            //         Debug.Log($"item has ability {ability.id} with effect {ability.effect}");
-            //     }
-            // }
+            Creatures creature = DB.Creatures.Dragon;
+            Debug.Log("[string] name: " + creature.Name);
+            Debug.Log("[bool] attacks player: " + creature.attacksPlayer);
+            Debug.Log("[int] base damage: " + creature.BaseDamage);
+            Debug.Log("[float] damage modifier: " + creature.DamageModifier);
+            Debug.Log("[enum] death sound: " + creature.DeathSound);
+            Debug.Log("[flag enum] spawn areas: " + creature.SpawnAreas);
+            foreach (var item in creature.DropsList)
+            {
+                Debug.Log($"{creature.Name} drops item {item.item} at rate {item.DropChance}");
+                foreach (var effect in item.PossibleEffectsList)
+                {
+                    Debug.Log($"item has effect {effect.effect} with chase {effect.EffectChance}");
+                }
+            }
             
             test = false;
         }
