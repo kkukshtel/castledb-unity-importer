@@ -1,5 +1,5 @@
 # CastleDB Unity Importer
-*Requires Unity 2018 + Scripting Runtime 4.X*  
+*INITIAL RELEASE - Requires Unity 2018 + Scripting Runtime 4.X*  
 Define all your data in CastleDB and then directly access your data in code in Unity with full intellisense support!
 
 Made in part as a database tool for [Cantata](https://www.cantata-game.com).
@@ -10,7 +10,8 @@ Made in part as a database tool for [Cantata](https://www.cantata-game.com).
 Construct some data in CastleDB:
 ![CastleDB Example](images/cdbshot.png)
 
-Import the repo's [.unitypackage release](https://github.com/kkukshtel/castledb-unity-importer/releases) into Unity (or open the repo project directly), and then add your .cdb file somewhere in your Assets directory. Unity will import the .cdb file and generate it's classes.
+Import the repo's [.unitypackage release](https://github.com/kkukshtel/castledb-unity-importer/releases) into Unity (or open the repo project directly), and then add your .cdb file somewhere in your Assets directory. Unity will import the .cdb file and generate it's classes.  
+**NOTE:** Your project needs to be using the latest .NET 4.X scripting runtime. For instructions on how to change this, see [Unity's documentation here](https://docs.unity3d.com/Manual/ScriptingRuntimeUpgrade.html).
 
 Open your code editor, and access your data like this:
 ```c#
@@ -71,6 +72,8 @@ Unity doesn't provide an easy way to globally manage game data, so this plugin i
 To use this plugin, download and import the latest Unity package from [the releases page](https://github.com/kkukshtel/castledb-unity-importer/releases). This repo can also directly be opened as a Unity project file and includes a sample CastleDB (.cdb) file.
 
 If you want to work with the sample file further or create your own data, [download and install CastleDB from here](http://castledb.org/).
+
+**NOTE:** Your project needs to be using the latest .NET 4.X scripting runtime. For instructions on how to change this, see [Unity's documentation here](https://docs.unity3d.com/Manual/ScriptingRuntimeUpgrade.html).
 
 If you are opening this repo as a project, you will see the Assets/TestFolder/GeneratedTypes folder by default (complete with generated code from the provided .cdb file).
 
