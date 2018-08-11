@@ -1,5 +1,5 @@
 using UnityEngine;
-using CompiledTypes;
+// using CompiledTypes;
 
 [ExecuteInEditMode]
 public class CastleDBTest : MonoBehaviour
@@ -10,9 +10,11 @@ public class CastleDBTest : MonoBehaviour
     {
         if(test)
         {
-            CastleDB DB = new CastleDB(CastleDBAsset);
-            Creatures creature = DB.Creatures.Dragon;
+            // CastleDB DB = new CastleDB(CastleDBAsset);
+            // Creatures creature = DB.Creatures.Dragon;
 
+            // DB.Creatures.James;
+            // Items item = DB.Creatures.Bear.DropsList[0].item;
             // Debug.Log("[string] name: " + creature.Name);
             // Debug.Log("[bool] attacks player: " + creature.attacksPlayer);
             // Debug.Log("[int] base damage: " + creature.BaseDamage);

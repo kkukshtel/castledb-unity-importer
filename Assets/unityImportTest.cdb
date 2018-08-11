@@ -34,17 +34,11 @@
 				{
 					"typeStr": "10:Forest,Mountains,Lake,Plains",
 					"name": "SpawnAreas"
-				},
-				{
-					"typeStr": "11",
-					"name": "colorValue",
-					"display": null
 				}
 			],
 			"lines": [
 				{
 					"id": "Squid",
-					"colorValue": 0,
 					"Name": "The Giant Squid",
 					"attacksPlayer": true,
 					"BaseDamage": 5,
@@ -66,7 +60,6 @@
 				},
 				{
 					"id": "Bear",
-					"colorValue": 0,
 					"Name": "Above Average Bear",
 					"attacksPlayer": false,
 					"BaseDamage": 10,
@@ -77,17 +70,16 @@
 				},
 				{
 					"id": "Dragon",
-					"colorValue": 0,
 					"Name": "Gilded Dragon",
 					"attacksPlayer": false,
 					"BaseDamage": 20,
 					"Drops": [
 						{
-							"item": "UltraSword",
+							"item": "HealingPotion",
 							"DropChance": 40,
 							"PossibleEffects": [
 								{
-									"effect": "poison",
+									"effect": "enchanted",
 									"EffectChance": 10
 								},
 								{
