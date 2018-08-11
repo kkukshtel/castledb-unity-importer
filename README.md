@@ -64,7 +64,7 @@ _From the [CastleDB](http://castledb.org/) site:_
 CastleDB is used to input structured static data. Everything that is usually stored in XML or JSON files can be stored and modified with CastleDB instead.
 
 ### Why this Plugin?
-*[Read my blog post about this here]()*  
+*[Read my blog post about this here](http://blog.kylekukshtel.com/castledb)*  
 Unity doesn't provide an easy way to globally manage game data, so this plugin is an attempt to fix that. CastleDB was built for this explicit purpose, but until now has only had an easy interop with games made in Haxe. This plugin is meant to provide Unity developers with not only CastleDB support but also the ability to use the database like the original Haxe API. This means allowing the developer to strongly reference data values in code by type, without having to roll their own data interpretation layer.
 
 ### Full Plugin Guide
