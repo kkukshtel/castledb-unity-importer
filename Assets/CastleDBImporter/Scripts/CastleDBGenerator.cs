@@ -3,12 +3,15 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEditor;
+#if UNITY_EDITOR
 using UnityEditor.Compilation;
+#endif
 using UnityEngine;
 
 
 namespace CastleDBImporter
 {
+#if UNITY_EDITOR
     public class CastleDBGenerator
     {
         public static void GenerateTypes(CastleDBParser.RootNode root)
@@ -252,4 +255,5 @@ namespace {CastleDBParser.Config.GeneratedTypesNamespace}
             }
         }
     }
+#endif
 }
