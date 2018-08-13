@@ -15,16 +15,11 @@ namespace CastleDBImporter
         public CastleDBParser(TextAsset db)
         {
             DBTextAsset = db;
-
 #if UNITY_EDITOR
             SetImporterOptions();
 #endif
-
             Root = new RootNode(JSON.Parse(DBTextAsset.text));
         }
-
-        public CastleDBParser(string dbText) :
-            this( new TextAsset(dbText ) ) { }
 
         public void RegenerateDB()
         {

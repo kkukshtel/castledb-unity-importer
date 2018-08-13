@@ -37,11 +37,11 @@ namespace CastleDBImporter
                     {
                         if(CastleDBUtils.GetTypeNumFromCastleDBTypeString(column.TypeStr) == "8")
                         {
-                            fieldText += ($"public List<{fieldType}> {column.Name}List = new List<{fieldType}>();\n");
+                            fieldText += ($"public List<{fieldType}> {column.Name}List = new List<{fieldType}>();\n\t\t");
                         }
                         else
                         {
-                            fieldText += ($"public {fieldType} {column.Name};\n");
+                            fieldText += ($"public {fieldType} {column.Name};\n\t\t");
                         }
                     }
                     else //enum type
@@ -73,10 +73,7 @@ namespace CastleDBImporter
 
                 //generate the constructor that sets the fields based on the passed in value
                 string constructorText = "";
-                if(!sheet.NestedType)
-                {
-                    constructorText += $"SimpleJSON.JSONNode node = root.GetSheetWithName(\"{sheet.Name}\").Rows[(int)line];\n";
-                }
+
                 for (int i = 0; i < sheet.Columns.Count; i++)
                 {
                     CastleDBParser.ColumnNode column = sheet.Columns[i];
@@ -106,68 +103,28 @@ namespace CastleDBImporter
                         {
                             enumCast = $"({column.Name}Enum)";
                         }
-                        constructorText += $"{column.Name} = {enumCast}node[\"{column.Name}\"]{castText};\n";
+                        constructorText += $"\t\t\t{column.Name} = {enumCast}node[\"{column.Name}\"]{castText};\n";
                     }
                 }
-
-                //need to construct an enum of possible types
-                string possibleValuesText = "";
-                if(!sheet.NestedType)
-                {
-                    possibleValuesText += $"public enum RowValues {{ \n";
-                    foreach (var name in sheet.RowNames)
-                    {
-                        possibleValuesText += name;
-                        if(sheet.RowNames.IndexOf(name) + 1 < sheet.RowNames.Count){ possibleValuesText += ", \n";}
-                    }
-                    possibleValuesText += "\n }";
-                }
-
-                string getMethodText = "";
-                if(!sheet.NestedType)
-                {
-                    getMethodText += $@"
-public static {sheet.Name}.RowValues GetRowValue(string name)
-{{
-    var values = (RowValues[])Enum.GetValues(typeof(RowValues));
-    for (int i = 0; i < values.Length; i++)
-    {{
-        if(values[i].ToString() == name)
-        {{
-            return values[i];
-        }}
-    }}
-    return values[0];
-}}";
-                }
-
+                             
                 string ctor = "";
-                if(!sheet.NestedType)
-                {
-                    ctor = $"public {sheet.Name} (CastleDBParser.RootNode root, RowValues line)";
-                }
-                else
-                {
-                    ctor = $"public {sheet.Name} (CastleDBParser.RootNode root, SimpleJSON.JSONNode node)";
-                }
-                // string usings = "using UnityEngine;\n using System;\n using System.Collections.Generic;\n using SimpleJSON;\n using CastleDBImporter;\n";
+                ctor = $"public {sheet.Name} (CastleDBParser.RootNode root, SimpleJSON.JSONNode node)";
                 string fullClassText = $@"
 using UnityEngine;
 using System;
 using System.Collections.Generic;
 using SimpleJSON;
 using CastleDBImporter;
+
 namespace {CastleDBParser.Config.GeneratedTypesNamespace}
 {{ 
     public class {sheet.Name}
     {{
         {fieldText}
-        {possibleValuesText} 
         {ctor} 
         {{
             {constructorText}
-        }}  
-        {getMethodText}
+        }} 
     }}
 }}";
                 Debug.Log("Generating CDB Class: " + sheet.Name);
@@ -184,29 +141,19 @@ namespace {CastleDBParser.Config.GeneratedTypesNamespace}
             foreach (CastleDBParser.SheetNode sheet in root.Sheets)
             {
                 if(sheet.NestedType){continue;} //only write main types to CastleDB
-                cdbfields += $"public {sheet.Name}Type {sheet.Name};\n";
-                cdbconstructorBody += $"{sheet.Name} = new {sheet.Name}Type();";
+                cdbfields += $"public Dictionary<string, {sheet.Name}> {sheet.Name}s;\n";
+                cdbconstructorBody += $"{sheet.Name}s = new Dictionary<string, {sheet.Name}>();\n";                
 
                 //get a list of all the row names
                 classTexts += $"public class {sheet.Name}Type \n {{";
+
+                cdbconstructorBody += $"\t\t\tforeach( var row in root.GetSheetWithName(\"{sheet.Name}\").Rows ) {{\n";
+                cdbconstructorBody += $"\t\t\t\t{sheet.Name}s[row[\"id\"]] = new {sheet.Name}(root, row);\n\t\t\t}}";
+
                 foreach (var name in sheet.RowNames)
-                {
+                {                   
                     classTexts += $"public {sheet.Name} {name} {{ get {{ return Get({CastleDBParser.Config.GeneratedTypesNamespace}.{sheet.Name}.RowValues.{name}); }} }} \n";
                 }
-
-                classTexts += $"private {sheet.Name} Get({CastleDBParser.Config.GeneratedTypesNamespace}.{sheet.Name}.RowValues line) {{ return new {sheet.Name}(parsedDB.Root, line); }}\n";
-                classTexts += $@"
-                public {sheet.Name}[] GetAll() 
-                {{
-                    var values = ({CastleDBParser.Config.GeneratedTypesNamespace}.{sheet.Name}.RowValues[])Enum.GetValues(typeof({CastleDBParser.Config.GeneratedTypesNamespace}.{sheet.Name}.RowValues));
-                    {sheet.Name}[] returnList = new {sheet.Name}[values.Length];
-                    for (int i = 0; i < values.Length; i++)
-                    {{
-                        returnList[i] = Get(values[i]);
-                    }}
-                    return returnList;
-                }}";
-                classTexts += $"\n }} //END OF {sheet.Name} \n";
             }
 
             string fullCastle = $@"
@@ -224,9 +171,9 @@ namespace {CastleDBParser.Config.GeneratedTypesNamespace}
         public CastleDB(TextAsset castleDBAsset)
         {{
             parsedDB = new CastleDBParser(castleDBAsset);
-            {cdbconstructorBody}
+            CastleDBParser.RootNode root = parsedDB.Root;
+            { cdbconstructorBody }
         }}
-        {classTexts}
     }}
 }}";
 
