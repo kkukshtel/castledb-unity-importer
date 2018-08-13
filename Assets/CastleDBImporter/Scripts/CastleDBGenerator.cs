@@ -11,9 +11,10 @@ using UnityEngine;
 
 namespace CastleDBImporter
 {
-#if UNITY_EDITOR
     public class CastleDBGenerator
     {
+
+#if UNITY_EDITOR
         public static void GenerateTypes(CastleDBParser.RootNode root)
         {
             // Create scripts
@@ -254,6 +255,6 @@ namespace {CastleDBParser.Config.GeneratedTypesNamespace}
                 AssetDatabase.Refresh();
             }
         }
-    }
 #endif
+    }
 }
