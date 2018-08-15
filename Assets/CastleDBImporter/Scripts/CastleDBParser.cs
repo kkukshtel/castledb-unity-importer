@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using SimpleJSON;
 using System;
-using UnityEditor;
 
 namespace CastleDBImporter
 {
@@ -10,25 +9,15 @@ namespace CastleDBImporter
     {
         TextAsset DBTextAsset;
         public RootNode Root {get; private set;}
-        public static CastleDBConfig Config { get; private set;}
-
         public CastleDBParser(TextAsset db)
         {
             DBTextAsset = db;
-            SetImporterOptions();
             Root = new RootNode(JSON.Parse(DBTextAsset.text));
         }
 
         public void RegenerateDB()
         {
             Root = new RootNode(JSON.Parse(DBTextAsset.text));
-        }
-
-        void SetImporterOptions()
-        {
-            var guids = AssetDatabase.FindAssets("CastleDBConfig t:CastleDBConfig");
-            var path = AssetDatabase.GUIDToAssetPath(guids[0]);
-            Config = AssetDatabase.LoadAssetAtPath(path, typeof(CastleDBConfig)) as CastleDBConfig;
         }
 
         public class RootNode
@@ -64,18 +53,6 @@ namespace CastleDBImporter
             public string Name { get; protected set; }
             public List<ColumnNode> Columns { get; protected set; }
             public List<SimpleJSON.JSONNode> Rows { get; protected set; }
-            public List<string> RowNames
-            {
-                get
-                {
-                    List<string> names = new List<string>();
-                    for (int i = 0; i < Rows.Count; i++)
-                    {
-                        names.Add(Rows[i][CastleDBParser.Config.GUIDColumnName]);
-                    }
-                    return names;
-                }
-            }
             public SheetNode(JSONNode sheetValue)
             {
                 value = sheetValue;
