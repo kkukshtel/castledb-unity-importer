@@ -8,7 +8,13 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
+<<<<<<< HEAD
+  - enabled: 0
+    path: Assets/New Scene.unity
+    guid: 579547dcfb0d873488b80db28d5c5bf8
+=======
   - enabled: 1
     path: Assets/CastleDBImporter/Sample/Test.unity
     guid: e89d9badb6c184b09b75c2cd1e264b99
+>>>>>>> upstream/master
   m_configObjects: {}

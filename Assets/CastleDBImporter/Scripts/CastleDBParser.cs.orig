@@ -12,6 +12,12 @@ namespace CastleDBImporter
         public CastleDBParser(TextAsset db)
         {
             DBTextAsset = db;
+<<<<<<< HEAD
+#if UNITY_EDITOR
+            SetImporterOptions();
+#endif
+=======
+>>>>>>> upstream/master
             Root = new RootNode(JSON.Parse(DBTextAsset.text));
         }
 
@@ -20,6 +26,18 @@ namespace CastleDBImporter
             Root = new RootNode(JSON.Parse(DBTextAsset.text));
         }
 
+<<<<<<< HEAD
+#if UNITY_EDITOR
+        void SetImporterOptions()
+        {
+            var guids = AssetDatabase.FindAssets("CastleDBConfig t:CastleDBConfig");
+            var path = AssetDatabase.GUIDToAssetPath(guids[0]);
+            Config = AssetDatabase.LoadAssetAtPath(path, typeof(CastleDBConfig)) as CastleDBConfig;
+        }
+#endif
+
+=======
+>>>>>>> upstream/master
         public class RootNode
         {
             JSONNode value;
@@ -53,7 +71,6 @@ namespace CastleDBImporter
             public string Name { get; protected set; }
             public List<ColumnNode> Columns { get; protected set; }
             public List<SimpleJSON.JSONNode> Rows { get; protected set; }
-            
             public SheetNode(JSONNode sheetValue)
             {
                 value = sheetValue;

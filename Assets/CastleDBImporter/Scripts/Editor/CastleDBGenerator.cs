@@ -3,9 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEditor;
-#if UNITY_EDITOR
 using UnityEditor.Compilation;
-#endif
 using UnityEngine;
 
 
@@ -14,17 +12,17 @@ namespace CastleDBImporter
     public class CastleDBGenerator
     {
 
-#if UNITY_EDITOR
-        public static void GenerateTypes(CastleDBParser.RootNode root)
+        public static void GenerateTypes(CastleDBParser.RootNode root, CastleDBConfig configFile)
         {
             // Create scripts
             List<string> scripts = new List<string>();
+            CastleDBConfig config = configFile;
 
-            InitTypePath();
+            InitTypePath(config);
 
             foreach (CastleDBParser.SheetNode sheet in root.Sheets)
             {
-                string scriptPath = $"Assets/{CastleDBParser.Config.GeneratedTypesLocation}/{sheet.Name}.cs";
+                string scriptPath = $"Assets/{config.GeneratedTypesLocation}/{sheet.Name}.cs";
                 scripts.Add(scriptPath);
 
                 //generate fields
@@ -91,7 +89,7 @@ namespace CastleDBImporter
                         //ref type
                         string refType = CastleDBUtils.GetTypeFromCastleDBColumn(column);
                         //look up the line based on the passed in row
-                        constructorText += $"{column.Name} = new {CastleDBParser.Config.GeneratedTypesNamespace}.{refType}(root,{CastleDBParser.Config.GeneratedTypesNamespace}.{refType}.GetRowValue(node[\"{column.Name}\"]));\n";
+                        constructorText += $"{column.Name} = new {config.GeneratedTypesNamespace}.{refType}(root,{config.GeneratedTypesNamespace}.{refType}.GetRowValue(node[\"{column.Name}\"]));\n";
                     }
                     else
                     {
@@ -115,8 +113,7 @@ using System;
 using System.Collections.Generic;
 using SimpleJSON;
 using CastleDBImporter;
-
-namespace {CastleDBParser.Config.GeneratedTypesNamespace}
+namespace {config.GeneratedTypesNamespace}
 {{ 
     public class {sheet.Name}
     {{
@@ -132,12 +129,11 @@ namespace {CastleDBParser.Config.GeneratedTypesNamespace}
             }
 
             //build the CastleDB file
-            string cdbscriptPath = $"Assets/{CastleDBParser.Config.GeneratedTypesLocation}/CastleDB.cs";
+            string cdbscriptPath = $"Assets/{config.GeneratedTypesLocation}/CastleDB.cs";
             scripts.Add(cdbscriptPath);
             //fields
             string cdbfields = "";
             string cdbconstructorBody = "";
-            string classTexts = "";
             foreach (CastleDBParser.SheetNode sheet in root.Sheets)
             {
                 if(sheet.NestedType){continue;} //only write main types to CastleDB
@@ -145,15 +141,8 @@ namespace {CastleDBParser.Config.GeneratedTypesNamespace}
                 cdbconstructorBody += $"{sheet.Name}s = new Dictionary<string, {sheet.Name}>();\n";                
 
                 //get a list of all the row names
-                classTexts += $"public class {sheet.Name}Type \n {{";
-
                 cdbconstructorBody += $"\t\t\tforeach( var row in root.GetSheetWithName(\"{sheet.Name}\").Rows ) {{\n";
-                cdbconstructorBody += $"\t\t\t\t{sheet.Name}s[row[\"id\"]] = new {sheet.Name}(root, row);\n\t\t\t}}";
-
-                foreach (var name in sheet.RowNames)
-                {                   
-                    classTexts += $"public {sheet.Name} {name} {{ get {{ return Get({CastleDBParser.Config.GeneratedTypesNamespace}.{sheet.Name}.RowValues.{name}); }} }} \n";
-                }
+                cdbconstructorBody += $"\t\t\t\t{sheet.Name}s[row[\"id\"]] = new {sheet.Name}(root, row);\n\t\t\t}}";          
             }
 
             string fullCastle = $@"
@@ -162,7 +151,7 @@ using CastleDBImporter;
 using System.Collections.Generic;
 using System;
 
-namespace {CastleDBParser.Config.GeneratedTypesNamespace}
+namespace {config.GeneratedTypesNamespace}
 {{
     public class CastleDB
     {{
@@ -183,9 +172,9 @@ namespace {CastleDBParser.Config.GeneratedTypesNamespace}
 
         }
 
-        public static void InitTypePath()
+        public static void InitTypePath(CastleDBConfig config)
         {
-            var path = $"{Application.dataPath}/{CastleDBParser.Config.GeneratedTypesLocation}";
+            var path = $"{Application.dataPath}/{config.GeneratedTypesLocation}";
             if (Directory.Exists (path))
             {
                 //we've generated this before, so delete the assets in the folder and refresh the DB
@@ -202,6 +191,5 @@ namespace {CastleDBParser.Config.GeneratedTypesNamespace}
                 AssetDatabase.Refresh();
             }
         }
-#endif
     }
 }
