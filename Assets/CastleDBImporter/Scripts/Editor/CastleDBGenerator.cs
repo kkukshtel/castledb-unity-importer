@@ -161,7 +161,7 @@ namespace {config.GeneratedTypesNamespace}
     {{
         static CastleDBParser parsedDB;
         {cdbfields}
-        public CastleDB(TextAsset castleDBAsset)
+        public CastleDB(TextAsset castleDBAsset, TextAsset casteDBImagesAsset = null)
         {{
             parsedDB = new CastleDBParser(castleDBAsset);
             CastleDBParser.RootNode root = parsedDB.Root;

@@ -29,6 +29,8 @@ namespace CastleDBImporter
                     return "Enum";
                 case "6": //ref type
                     return GetRefTypeFromTypeString(column.TypeStr);
+                case "7": //ref type
+                    return "string";
                 case "8": //nested list type
                     return column.Name;
                 case "11": //color

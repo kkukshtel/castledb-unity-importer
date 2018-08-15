@@ -8,15 +8,40 @@ namespace CastleDBImporter
     public class CastleDBParser
     {
         TextAsset DBTextAsset;
+        TextAsset DBImagesTextAsset;
+
         public RootNode Root {get; private set;}
-        public CastleDBParser(TextAsset db)
+        public Dictionary<string, Texture> DatabaseImages { get; private set; }
+
+        public CastleDBParser(TextAsset db, TextAsset dbImages = null)
         {
             DBTextAsset = db;
-            Root = new RootNode(JSON.Parse(DBTextAsset.text));
+            DBImagesTextAsset = dbImages;
+
+            RegenerateDB();
         }
 
         public void RegenerateDB()
         {
+            if (DBImagesTextAsset != null)
+            {
+                DatabaseImages = new Dictionary<string, Texture>();
+
+                var dbImagesJSON = JSON.Parse(DBImagesTextAsset.text);
+                foreach (var dbImage in dbImagesJSON.AsObject)
+                {
+                    string base64 = dbImage.Value.ToString().Split(',')[1];
+                    byte[] bytes = Convert.FromBase64String(base64);
+
+                    Texture2D tex = new Texture2D(2, 2);
+
+                    if (!tex.LoadImage(bytes))
+                        Debug.LogError("Error loading image from database: " + dbImage.Key);
+
+                    DatabaseImages[dbImage.Key] = tex;
+                }
+            }
+
             Root = new RootNode(JSON.Parse(DBTextAsset.text));
         }
 

@@ -116,9 +116,9 @@ NavMeshSettings:
 --- !u!1 &464218245
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 464218247}
   - component: {fileID: 464218246}
@@ -132,7 +132,7 @@ GameObject:
 --- !u!114 &464218246
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 464218245}
   m_Enabled: 1
@@ -140,12 +140,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aff69bb0f1d004fc287790e172daa2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CastleDBAsset: {fileID: 4900000, guid: 6ea4ca9debd2044f89a5ccc272b7bf09, type: 3}
+  CastleDBAsset: {fileID: 4900000, guid: 774faf279c6bbf54e971cb889729873b, type: 3}
+  CastleDBImagesAsset: {fileID: 4900000, guid: 6ea21edf458bc774184da94f04ccc330, type: 3}
   test: 0
 --- !u!4 &464218247
 Transform:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 464218245}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -158,9 +159,9 @@ Transform:
 --- !u!1 &2096783102
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 2096783106}
   - component: {fileID: 2096783105}
@@ -176,27 +177,31 @@ GameObject:
 --- !u!81 &2096783103
 AudioListener:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2096783102}
   m_Enabled: 1
 --- !u!124 &2096783104
 Behaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2096783102}
   m_Enabled: 1
 --- !u!20 &2096783105
 Camera:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2096783102}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_projectionMatrixMode: 1
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -226,7 +231,7 @@ Camera:
 --- !u!4 &2096783106
 Transform:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2096783102}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
