@@ -17,14 +17,14 @@ namespace CompiledTypes
 		public DeathSoundEnum DeathSound;
 public enum DeathSoundEnum {  Sound1 = 0,Sound2 = 1 }public SpawnAreasFlag SpawnAreas;
 [FlagsAttribute] public enum SpawnAreasFlag { Forest = 1,Mountains = 2,Lake = 4,Plains = 8 }
-        public Creatures (CastleDBParser.RootNode root, SimpleJSON.JSONNode node) 
+        public Creatures (CastleDBParser.RootNode root, SimpleJSON.JSONNode node, Dictionary<string, Texture> DatabaseImages) 
         {
             			id = node["id"];
 			Name = node["Name"];
 			attacksPlayer = node["attacksPlayer"].AsBool;
 			BaseDamage = node["BaseDamage"].AsInt;
 			DamageModifier = node["DamageModifier"].AsFloat;
-			foreach(var item in node["Drops"]) { DropsList.Add(new Drops(root, item));}
+			foreach(var item in node["Drops"]) { DropsList.Add(new Drops(root, item, DatabaseImages));}
 			DeathSound = (DeathSoundEnum)node["DeathSound"].AsInt;
 			SpawnAreas = (SpawnAreasFlag)node["SpawnAreas"].AsInt;
 

@@ -11,14 +11,14 @@ namespace CompiledTypes
         public string id;
 		public string name;
 		public int Weight;
-		public string image;
+		public Texture image;
 		
-        public Items (CastleDBParser.RootNode root, SimpleJSON.JSONNode node) 
+        public Items (CastleDBParser.RootNode root, SimpleJSON.JSONNode node, Dictionary<string, Texture> DatabaseImages) 
         {
             			id = node["id"];
 			name = node["name"];
 			Weight = node["Weight"].AsInt;
-			image = node["image"];
+			image = DatabaseImages[node["image"]];
 
         } 
     }

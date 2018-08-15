@@ -23,6 +23,7 @@ namespace CastleDBImporter
 
             foreach (CastleDBParser.SheetNode sheet in root.Sheets)
             {
+                Debug.Log("Doinog: " + sheet.Name);
                 string scriptPath = $"Assets/{config.GeneratedTypesLocation}/{sheet.Name}.cs";
                 scripts.Add(scriptPath);
 
@@ -72,6 +73,7 @@ namespace CastleDBImporter
 
                 //generate the constructor that sets the fields based on the passed in value
                 StringBuilder constructorText = new StringBuilder();
+               
 
                 for (int i = 0; i < sheet.Columns.Count; i++)
                 {
@@ -79,29 +81,42 @@ namespace CastleDBImporter
                     string castText = CastleDBUtils.GetCastStringFromCastleDBTypeStr(column.TypeStr);
                     string enumCast = "";
                     string typeNum = CastleDBUtils.GetTypeNumFromCastleDBTypeString(column.TypeStr);
-                    if(typeNum == "8")
+                    if (typeNum == "8")
                     {
                         //list type
-                        constructorText.Append($"\t\t\tforeach(var item in node[\"{column.Name}\"]) {{ {column.Name}List.Add(new {column.Name}(root, item));}}\n");
+                        if (CastleDBUtils.DoesSheetContainImages(root, root.GetSheetWithName(column.Name)))
+                            constructorText.Append($"\t\t\tforeach(var item in node[\"{column.Name}\"]) {{ {column.Name}List.Add(new {column.Name}(root, item, DatabaseImages));}}\n");
+                        else
+                            constructorText.Append($"\t\t\tforeach(var item in node[\"{column.Name}\"]) {{ {column.Name}List.Add(new {column.Name}(root, item));}}\n");
                     }
-                    else if(typeNum == "6")
+                    else if (typeNum == "6")
                     {
                         //working area:
                         //ref type
                         string refType = CastleDBUtils.GetTypeFromCastleDBColumn(column);
                         //look up the line based on the passed in row
-                        constructorText.Append(
+                        if (CastleDBUtils.DoesSheetContainImages(root, sheet))
+                            constructorText.Append(
+                            $"{column.Name} = new {config.GeneratedTypesNamespace}.{refType}(root, root.GetSheetWithName(\"{refType}\")." +
+                            $"Rows.Find( pred => pred[\"{config.GUIDColumnName}\"] == node[\"{column.Name}\"]), DatabaseImages);\n"
+                        );
+                        else
+                            constructorText.Append(
                             $"{column.Name} = new {config.GeneratedTypesNamespace}.{refType}(root, root.GetSheetWithName(\"{refType}\")." +
                             $"Rows.Find( pred => pred[\"{config.GUIDColumnName}\"] == node[\"{column.Name}\"]));\n"
                         );
                     }
+                    else if (typeNum == "7") // Image type
+                    {
+                        constructorText.Append($"\t\t\t{column.Name} = DatabaseImages[node[\"{column.Name}\"]];\n");
+                    }
                     else
                     {
-                        if(typeNum == "10")
+                        if (typeNum == "10")
                         {
                             enumCast = $"({column.Name}Flag)";
                         }
-                        else if(typeNum == "5")
+                        else if (typeNum == "5")
                         {
                             enumCast = $"({column.Name}Enum)";
                         }
@@ -110,7 +125,10 @@ namespace CastleDBImporter
                 }
                              
                 string ctor = "";
-                ctor = $"public {sheet.Name} (CastleDBParser.RootNode root, SimpleJSON.JSONNode node)";
+                if(CastleDBUtils.DoesSheetContainImages(root, sheet)) 
+                    ctor = $"public {sheet.Name} (CastleDBParser.RootNode root, SimpleJSON.JSONNode node, Dictionary<string, Texture> DatabaseImages)";
+                else
+                    ctor = $"public {sheet.Name} (CastleDBParser.RootNode root, SimpleJSON.JSONNode node)";
                 string fullClassText = $@"
 using UnityEngine;
 using System;
@@ -140,13 +158,17 @@ namespace {config.GeneratedTypesNamespace}
             string cdbconstructorBody = "";
             foreach (CastleDBParser.SheetNode sheet in root.Sheets)
             {
-                if(sheet.NestedType){continue;} //only write main types to CastleDB
+                if (sheet.NestedType){continue;} //only write main types to CastleDB
                 cdbfields += $"public Dictionary<string, {sheet.Name}> {sheet.Name};\n";
                 cdbconstructorBody += $"{sheet.Name} = new Dictionary<string, {sheet.Name}>();\n";                
 
                 //get a list of all the row names
                 cdbconstructorBody += $"\t\t\tforeach( var row in root.GetSheetWithName(\"{sheet.Name}\").Rows ) {{\n";
-                cdbconstructorBody += $"\t\t\t\t{sheet.Name}[row[\"id\"]] = new {sheet.Name}(root, row);\n\t\t\t}}";          
+
+                if( CastleDBUtils.DoesSheetContainImages(root, sheet))
+                    cdbconstructorBody += $"\t\t\t\t{sheet.Name}[row[\"id\"]] = new {sheet.Name}(root, row, parsedDB.DatabaseImages);\n\t\t\t}}";          
+                else
+                    cdbconstructorBody += $"\t\t\t\t{sheet.Name}[row[\"id\"]] = new {sheet.Name}(root, row);\n\t\t\t}}";
             }
 
             string fullCastle = $@"
@@ -161,9 +183,9 @@ namespace {config.GeneratedTypesNamespace}
     {{
         static CastleDBParser parsedDB;
         {cdbfields}
-        public CastleDB(TextAsset castleDBAsset, TextAsset casteDBImagesAsset = null)
+        public CastleDB(TextAsset castleDBAsset, TextAsset castleDBImagesAsset = null)
         {{
-            parsedDB = new CastleDBParser(castleDBAsset);
+            parsedDB = new CastleDBParser(castleDBAsset, castleDBImagesAsset);
             CastleDBParser.RootNode root = parsedDB.Root;
             { cdbconstructorBody }
         }}

@@ -8,6 +8,8 @@ public class CastleDBTest : MonoBehaviour
     public TextAsset CastleDBAsset;
     public TextAsset CastleDBImagesAsset;
     public bool test;
+    Texture textureToRender;
+
     void Update()
     {
         if(test)
@@ -29,7 +31,14 @@ public class CastleDBTest : MonoBehaviour
                 }
             }
 
+            textureToRender = creature.DropsList[0].item.image;
+
             test = false;
         }
+    }
+
+    void OnGUI()
+    {
+        GUI.DrawTexture(new Rect(5, 5, 100, 100), textureToRender);
     }
 }
