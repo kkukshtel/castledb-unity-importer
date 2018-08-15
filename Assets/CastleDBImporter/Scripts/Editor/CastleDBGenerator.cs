@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
@@ -70,7 +71,7 @@ namespace CastleDBImporter
                 }
 
                 //generate the constructor that sets the fields based on the passed in value
-                string constructorText = "";
+                StringBuilder constructorText = new StringBuilder();
 
                 for (int i = 0; i < sheet.Columns.Count; i++)
                 {
@@ -81,7 +82,7 @@ namespace CastleDBImporter
                     if(typeNum == "8")
                     {
                         //list type
-                        constructorText += $"foreach(var item in node[\"{column.Name}\"]) {{ {column.Name}List.Add(new {column.Name}(root, item));}}\n";
+                        constructorText.Append($"\t\t\tforeach(var item in node[\"{column.Name}\"]) {{ {column.Name}List.Add(new {column.Name}(root, item));}}\n");
                     }
                     else if(typeNum == "6")
                     {
@@ -89,7 +90,10 @@ namespace CastleDBImporter
                         //ref type
                         string refType = CastleDBUtils.GetTypeFromCastleDBColumn(column);
                         //look up the line based on the passed in row
-                        constructorText += $"{column.Name} = new {config.GeneratedTypesNamespace}.{refType}(root,{config.GeneratedTypesNamespace}.{refType}.GetRowValue(node[\"{column.Name}\"]));\n";
+                        constructorText.Append(
+                            $"{column.Name} = new {config.GeneratedTypesNamespace}.{refType}(root, root.GetSheetWithName(\"{refType}\")." +
+                            $"Rows.Find( pred => pred[\"{config.GUIDColumnName}\"] == node[\"{column.Name}\"]));\n"
+                        );
                     }
                     else
                     {
@@ -101,7 +105,7 @@ namespace CastleDBImporter
                         {
                             enumCast = $"({column.Name}Enum)";
                         }
-                        constructorText += $"\t\t\t{column.Name} = {enumCast}node[\"{column.Name}\"]{castText};\n";
+                        constructorText.Append($"\t\t\t{column.Name} = {enumCast}node[\"{column.Name}\"]{castText};\n");
                     }
                 }
                              
@@ -137,12 +141,12 @@ namespace {config.GeneratedTypesNamespace}
             foreach (CastleDBParser.SheetNode sheet in root.Sheets)
             {
                 if(sheet.NestedType){continue;} //only write main types to CastleDB
-                cdbfields += $"public Dictionary<string, {sheet.Name}> {sheet.Name}s;\n";
-                cdbconstructorBody += $"{sheet.Name}s = new Dictionary<string, {sheet.Name}>();\n";                
+                cdbfields += $"public Dictionary<string, {sheet.Name}> {sheet.Name};\n";
+                cdbconstructorBody += $"{sheet.Name} = new Dictionary<string, {sheet.Name}>();\n";                
 
                 //get a list of all the row names
                 cdbconstructorBody += $"\t\t\tforeach( var row in root.GetSheetWithName(\"{sheet.Name}\").Rows ) {{\n";
-                cdbconstructorBody += $"\t\t\t\t{sheet.Name}s[row[\"id\"]] = new {sheet.Name}(root, row);\n\t\t\t}}";          
+                cdbconstructorBody += $"\t\t\t\t{sheet.Name}[row[\"id\"]] = new {sheet.Name}(root, row);\n\t\t\t}}";          
             }
 
             string fullCastle = $@"
