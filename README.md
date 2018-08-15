@@ -1,5 +1,5 @@
 # CastleDB Unity Importer
-*INITIAL RELEASE - Requires Unity 2018 + Scripting Runtime 4.X*  
+*Requires Unity 2018 + Scripting Runtime 4.X*  
 Define all your data in CastleDB and then directly access your data in code in Unity with full intellisense support!
 
 Made in part as a database tool for [Cantata](https://www.cantata-game.com).
