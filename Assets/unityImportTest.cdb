@@ -111,23 +111,30 @@
 				{
 					"typeStr": "3",
 					"name": "Weight"
+				},
+				{
+					"typeStr": "7",
+					"name": "image"
 				}
 			],
 			"lines": [
 				{
 					"id": "HealingPotion",
 					"name": "Healing Potion",
-					"Weight": 10
+					"Weight": 10,
+					"image": "989ff0887982a8f7fbf8a049ee355a6d"
 				},
 				{
 					"id": "PoisonPotion",
 					"name": "Poison Potion",
-					"Weight": 15
+					"Weight": 15,
+					"image": "f6d2783a4b754a2cd4d05051340d4717"
 				},
 				{
 					"id": "UltraSword",
 					"name": "Ultra Sword",
-					"Weight": 50
+					"Weight": 50,
+					"image": "d41bb76cdb992cfd2458ea2ee80521dc"
 				}
 			],
 			"separators": [],

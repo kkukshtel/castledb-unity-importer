@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace CastleDBImporter
 {
     public class CastleDBGenerator
     {
+
         public static void GenerateTypes(CastleDBParser.RootNode root, CastleDBConfig configFile)
         {
             // Create scripts
@@ -21,6 +23,7 @@ namespace CastleDBImporter
 
             foreach (CastleDBParser.SheetNode sheet in root.Sheets)
             {
+                Debug.Log("Doinog: " + sheet.Name);
                 string scriptPath = $"Assets/{config.GeneratedTypesLocation}/{sheet.Name}.cs";
                 scripts.Add(scriptPath);
 
@@ -34,11 +37,11 @@ namespace CastleDBImporter
                     {
                         if(CastleDBUtils.GetTypeNumFromCastleDBTypeString(column.TypeStr) == "8")
                         {
-                            fieldText += ($"public List<{fieldType}> {column.Name}List = new List<{fieldType}>();\n");
+                            fieldText += ($"public List<{fieldType}> {column.Name}List = new List<{fieldType}>();\n\t\t");
                         }
                         else
                         {
-                            fieldText += ($"public {fieldType} {column.Name};\n");
+                            fieldText += ($"public {fieldType} {column.Name};\n\t\t");
                         }
                     }
                     else //enum type
@@ -69,87 +72,63 @@ namespace CastleDBImporter
                 }
 
                 //generate the constructor that sets the fields based on the passed in value
-                string constructorText = "";
-                if(!sheet.NestedType)
-                {
-                    constructorText += $"SimpleJSON.JSONNode node = root.GetSheetWithName(\"{sheet.Name}\").Rows[(int)line];\n";
-                }
+                StringBuilder constructorText = new StringBuilder();
+               
+
                 for (int i = 0; i < sheet.Columns.Count; i++)
                 {
                     CastleDBParser.ColumnNode column = sheet.Columns[i];
                     string castText = CastleDBUtils.GetCastStringFromCastleDBTypeStr(column.TypeStr);
                     string enumCast = "";
                     string typeNum = CastleDBUtils.GetTypeNumFromCastleDBTypeString(column.TypeStr);
-                    if(typeNum == "8")
+                    if (typeNum == "8")
                     {
                         //list type
-                        constructorText += $"foreach(var item in node[\"{column.Name}\"]) {{ {column.Name}List.Add(new {column.Name}(root, item));}}\n";
+                        if (CastleDBUtils.DoesSheetContainImages(root, root.GetSheetWithName(column.Name)))
+                            constructorText.Append($"\t\t\tforeach(var item in node[\"{column.Name}\"]) {{ {column.Name}List.Add(new {column.Name}(root, item, DatabaseImages));}}\n");
+                        else
+                            constructorText.Append($"\t\t\tforeach(var item in node[\"{column.Name}\"]) {{ {column.Name}List.Add(new {column.Name}(root, item));}}\n");
                     }
-                    else if(typeNum == "6")
+                    else if (typeNum == "6")
                     {
                         //working area:
                         //ref type
                         string refType = CastleDBUtils.GetTypeFromCastleDBColumn(column);
                         //look up the line based on the passed in row
-                        constructorText += $"{column.Name} = new {config.GeneratedTypesNamespace}.{refType}(root,{config.GeneratedTypesNamespace}.{refType}.GetRowValue(node[\"{column.Name}\"]));\n";
+                        if (CastleDBUtils.DoesSheetContainImages(root, sheet))
+                            constructorText.Append(
+                            $"{column.Name} = new {config.GeneratedTypesNamespace}.{refType}(root, root.GetSheetWithName(\"{refType}\")." +
+                            $"Rows.Find( pred => pred[\"{config.GUIDColumnName}\"] == node[\"{column.Name}\"]), DatabaseImages);\n"
+                        );
+                        else
+                            constructorText.Append(
+                            $"{column.Name} = new {config.GeneratedTypesNamespace}.{refType}(root, root.GetSheetWithName(\"{refType}\")." +
+                            $"Rows.Find( pred => pred[\"{config.GUIDColumnName}\"] == node[\"{column.Name}\"]));\n"
+                        );
+                    }
+                    else if (typeNum == "7") // Image type
+                    {
+                        constructorText.Append($"\t\t\t{column.Name} = DatabaseImages[node[\"{column.Name}\"]];\n");
                     }
                     else
                     {
-                        if(typeNum == "10")
+                        if (typeNum == "10")
                         {
                             enumCast = $"({column.Name}Flag)";
                         }
-                        else if(typeNum == "5")
+                        else if (typeNum == "5")
                         {
                             enumCast = $"({column.Name}Enum)";
                         }
-                        constructorText += $"{column.Name} = {enumCast}node[\"{column.Name}\"]{castText};\n";
+                        constructorText.Append($"\t\t\t{column.Name} = {enumCast}node[\"{column.Name}\"]{castText};\n");
                     }
                 }
-
-                //need to construct an enum of possible types
-                string possibleValuesText = "";
-                if(!sheet.NestedType)
-                {
-                    possibleValuesText += $"public enum RowValues {{ \n";
-
-                    for (int i = 0; i < sheet.Rows.Count; i++)
-                    {
-                        string rowName = sheet.Rows[i][config.GUIDColumnName];
-                        possibleValuesText += rowName;
-                        if(i + 1 < sheet.Rows.Count){ possibleValuesText += ", \n";}
-                    }
-                    possibleValuesText += "\n }";
-                }
-
-                string getMethodText = "";
-                if(!sheet.NestedType)
-                {
-                    getMethodText += $@"
-public static {sheet.Name}.RowValues GetRowValue(string name)
-{{
-    var values = (RowValues[])Enum.GetValues(typeof(RowValues));
-    for (int i = 0; i < values.Length; i++)
-    {{
-        if(values[i].ToString() == name)
-        {{
-            return values[i];
-        }}
-    }}
-    return values[0];
-}}";
-                }
-
+                             
                 string ctor = "";
-                if(!sheet.NestedType)
-                {
-                    ctor = $"public {sheet.Name} (CastleDBParser.RootNode root, RowValues line)";
-                }
+                if(CastleDBUtils.DoesSheetContainImages(root, sheet)) 
+                    ctor = $"public {sheet.Name} (CastleDBParser.RootNode root, SimpleJSON.JSONNode node, Dictionary<string, Texture> DatabaseImages)";
                 else
-                {
                     ctor = $"public {sheet.Name} (CastleDBParser.RootNode root, SimpleJSON.JSONNode node)";
-                }
-                // string usings = "using UnityEngine;\n using System;\n using System.Collections.Generic;\n using SimpleJSON;\n using CastleDBImporter;\n";
                 string fullClassText = $@"
 using UnityEngine;
 using System;
@@ -161,12 +140,10 @@ namespace {config.GeneratedTypesNamespace}
     public class {sheet.Name}
     {{
         {fieldText}
-        {possibleValuesText} 
         {ctor} 
         {{
             {constructorText}
-        }}  
-        {getMethodText}
+        }} 
     }}
 }}";
                 Debug.Log("Generating CDB Class: " + sheet.Name);
@@ -179,33 +156,19 @@ namespace {config.GeneratedTypesNamespace}
             //fields
             string cdbfields = "";
             string cdbconstructorBody = "";
-            string classTexts = "";
             foreach (CastleDBParser.SheetNode sheet in root.Sheets)
             {
-                if(sheet.NestedType){continue;} //only write main types to CastleDB
-                cdbfields += $"public {sheet.Name}Type {sheet.Name};\n";
-                cdbconstructorBody += $"{sheet.Name} = new {sheet.Name}Type();";
+                if (sheet.NestedType){continue;} //only write main types to CastleDB
+                cdbfields += $"public Dictionary<string, {sheet.Name}> {sheet.Name};\n";
+                cdbconstructorBody += $"{sheet.Name} = new Dictionary<string, {sheet.Name}>();\n";                
 
                 //get a list of all the row names
-                classTexts += $"public class {sheet.Name}Type \n {{";
-                for (int i = 0; i < sheet.Rows.Count; i++)
-                {
-                    string rowName = sheet.Rows[i][config.GUIDColumnName];
-                    classTexts += $"public {sheet.Name} {rowName} {{ get {{ return Get({config.GeneratedTypesNamespace}.{sheet.Name}.RowValues.{rowName}); }} }} \n";
-                }
-                classTexts += $"private {sheet.Name} Get({config.GeneratedTypesNamespace}.{sheet.Name}.RowValues line) {{ return new {sheet.Name}(parsedDB.Root, line); }}\n";
-                classTexts += $@"
-                public {sheet.Name}[] GetAll() 
-                {{
-                    var values = ({config.GeneratedTypesNamespace}.{sheet.Name}.RowValues[])Enum.GetValues(typeof({config.GeneratedTypesNamespace}.{sheet.Name}.RowValues));
-                    {sheet.Name}[] returnList = new {sheet.Name}[values.Length];
-                    for (int i = 0; i < values.Length; i++)
-                    {{
-                        returnList[i] = Get(values[i]);
-                    }}
-                    return returnList;
-                }}";
-                classTexts += $"\n }} //END OF {sheet.Name} \n";
+                cdbconstructorBody += $"\t\t\tforeach( var row in root.GetSheetWithName(\"{sheet.Name}\").Rows ) {{\n";
+
+                if( CastleDBUtils.DoesSheetContainImages(root, sheet))
+                    cdbconstructorBody += $"\t\t\t\t{sheet.Name}[row[\"id\"]] = new {sheet.Name}(root, row, parsedDB.DatabaseImages);\n\t\t\t}}";          
+                else
+                    cdbconstructorBody += $"\t\t\t\t{sheet.Name}[row[\"id\"]] = new {sheet.Name}(root, row);\n\t\t\t}}";
             }
 
             string fullCastle = $@"
@@ -220,12 +183,12 @@ namespace {config.GeneratedTypesNamespace}
     {{
         static CastleDBParser parsedDB;
         {cdbfields}
-        public CastleDB(TextAsset castleDBAsset)
+        public CastleDB(TextAsset castleDBAsset, TextAsset castleDBImagesAsset = null)
         {{
-            parsedDB = new CastleDBParser(castleDBAsset);
-            {cdbconstructorBody}
+            parsedDB = new CastleDBParser(castleDBAsset, castleDBImagesAsset);
+            CastleDBParser.RootNode root = parsedDB.Root;
+            { cdbconstructorBody }
         }}
-        {classTexts}
     }}
 }}";
 

@@ -29,6 +29,8 @@ namespace CastleDBImporter
                     return "Enum";
                 case "6": //ref type
                     return GetRefTypeFromTypeString(column.TypeStr);
+                case "7": //image type
+                    return "Texture";
                 case "8": //nested list type
                     return column.Name;
                 case "11": //color
@@ -86,6 +88,35 @@ namespace CastleDBImporter
             String[] init = inputString.Split(delimiter1);
             String[] enumvalues = init[1].Split(delimiter2);
             return enumvalues;
+        }
+
+        public static bool DoesSheetContainImages(CastleDBParser.RootNode rootNode, CastleDBParser.SheetNode sheetNode)
+        {
+            Debug.Log(sheetNode.Name);
+
+            for (int i = 0; i < sheetNode.Columns.Count; i++)
+            {
+                CastleDBParser.ColumnNode column = sheetNode.Columns[i];
+                string typeNum = GetTypeNumFromCastleDBTypeString(column.TypeStr);
+
+                if (typeNum == "7")
+                {
+                    return true;
+                } else if (typeNum == "6")
+                {
+                    string refType = GetTypeFromCastleDBColumn(column);
+                    var refSheet = rootNode.GetSheetWithName(refType);
+                    Debug.Log(refType);
+                    return DoesSheetContainImages(rootNode, refSheet);
+                } else if( typeNum == "8" )
+                {
+                    var refSheet = rootNode.GetSheetWithName(column.Name);
+                    Debug.Log(column.Name);
+                    return DoesSheetContainImages(rootNode, refSheet);
+                }
+            }
+
+            return false;
         }
 
         /* Unused but maybe useful in the future
