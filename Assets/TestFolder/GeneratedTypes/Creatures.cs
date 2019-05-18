@@ -16,7 +16,8 @@ public float DamageModifier;
 public List<Drops> DropsList = new List<Drops>();
 public DeathSoundEnum DeathSound;
 public enum DeathSoundEnum {  Sound1 = 0,Sound2 = 1 }public SpawnAreasFlag SpawnAreas;
-[FlagsAttribute] public enum SpawnAreasFlag { Forest = 1,Mountains = 2,Lake = 4,Plains = 8 }
+[FlagsAttribute] public enum SpawnAreasFlag { Forest = 1,Mountains = 2,Lake = 4,Plains = 8 }public Color Color;
+
         public enum RowValues { 
 Squid, 
 Bear, 
@@ -33,6 +34,7 @@ DamageModifier = node["DamageModifier"].AsFloat;
 foreach(var item in node["Drops"]) { DropsList.Add(new Drops(root, item));}
 DeathSound = (DeathSoundEnum)node["DeathSound"].AsInt;
 SpawnAreas = (SpawnAreasFlag)node["SpawnAreas"].AsInt;
+Color = CastleDB.GetColorFromString( node["Color"]);
 
         }  
         

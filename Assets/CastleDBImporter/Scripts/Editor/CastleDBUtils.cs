@@ -32,9 +32,7 @@ namespace CastleDBImporter
                 case "8": //nested list type
                     return column.Name;
                 case "11": //color
-                     //TODO: fix color encoding  https://docs.unity3d.com/ScriptReference/ColorUtility.TryParseHtmlString.html
-                    return "string";
-                    // return typeof(Color); 
+                     return "Color"; 
                 default:
                     return "string";
             }
