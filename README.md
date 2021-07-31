@@ -6,6 +6,8 @@ Made in part as a database tool for [Cantata](https://www.cantata-game.com).
 
 ## General Information
 
+NOTE: While this tool still works, the repo is in maitencne mode as most of my efforts are now directed to [Depot](https://github.com/afterschoolstudio/Depot). Depot aims to replicate most of the functionality of CastleDB, but in a context seperate from Haxe and without needing a separate application (it runs in VS Code).
+
 ### Getting Started
 Construct some data in CastleDB:
 ![CastleDB Example](images/cdbshot.png)
